@@ -5,11 +5,10 @@ AOC2021:Day02
 https://adventofcode.com/2021/day/2
 """
 
-from pprint import pprint
 from typing import List
 import sys
 
-class Submarine_pt1():
+class SubmarinePt1():
     """
     Object to manage the y/z coorinates of a submarine based on a list of orders.
     Utilizes instructions for Part 1 of challenge.
@@ -29,14 +28,14 @@ class Submarine_pt1():
         Input: List of Tuples (string, int)
         Output: None
         """
-        if type(move_orders) != list:
+        if not isinstance(move_orders, list):
             raise ValueError("'move_orders' must be a list of tuples")
         for move in move_orders:
-            if (type(move) != tuple
-                or len(move) != 2
-                or type(move[0]) != str
-                or move[0] not in ['up','down','forward']
-                or type(int(move[1])) != int):
+            if not (isinstance(move, tuple)
+                and len(move) == 2
+                and isinstance(move[0], str)
+                and move[0] in ['up','down','forward']
+                and isinstance(int(move[1]), int)):
                 print(f'{move} not valid')
                 raise ValueError("'move_orders' should be a list of tuples containing a direction (up,down,forward) and a distance")
 
@@ -55,7 +54,7 @@ class Submarine_pt1():
                 case 'forward':
                     self.pos_y += int(order[1])
 
-class Submarine_pt2(Submarine_pt1):
+class SubmarinePt2(SubmarinePt1):
     """
     Object to manage the y/z coorinates of a submarine based on a list of orders.
     Utilizes instructions for Part 2 of challenge.
@@ -84,14 +83,13 @@ if __name__ == '__main__':
         else:
             test_set.pop(idx)
     print('Performing analysis for pt1...')
-    submarine_1 = Submarine_pt1(test_set)
+    submarine_1 = SubmarinePt1(test_set)
     print(f'File Analyzed: {test_set_file}')
     print(f'Y Pos: {submarine_1.pos_y}')
     print(f'Z Pos: {submarine_1.pos_z}')
     print('Performing analysis for pt2...')
-    submarine_2 = Submarine_pt2(test_set)
+    submarine_2 = SubmarinePt2(test_set)
     print(f'File Analyzed: {test_set_file}')
     print(f'Final Aim: {submarine_2.aim}')
     print(f'Y Pos: {submarine_2.pos_y}')
     print(f'Z Pos: {submarine_2.pos_z}')
-
