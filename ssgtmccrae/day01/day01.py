@@ -23,7 +23,7 @@ class DepthSet():
         self.depth_set = [int(depth) for depth in depth_set]
         self.check_deltas()
 
-    def check_deltas(self):
+    def check_deltas(self, sum_count=1):
         """
         Checks the difference between a depth and the one immediately after it and appends that to a list.
         Input: self.depth_set (List[int])
@@ -33,9 +33,14 @@ class DepthSet():
         depth_deltas = []
         # 'For' loop does not work due to final index or first index being invalid.
         # List of deltas by nature must be one less than original list.
-        while len(depth_set) > 1:
-            # Simultaneously performs required math and removes first list item.
-            depth_deltas.append(depth_set[1]-depth_set.pop(0))
+        while len(depth_set) > sum_count:
+            first_sum, second_sum = 0, 0
+            for i in range(0, sum_count):
+                first_sum += depth_set[0 + i]
+                second_sum += depth_set[1 + i]
+            depth_deltas.append(second_sum - first_sum)
+            depth_set.pop(0)
+
         self.depth_deltas = depth_deltas
 
     @property
@@ -66,7 +71,10 @@ if __name__ == '__main__':
     test_set_file = sys.argv[1]
     with open(test_set_file, 'r', encoding="utf-8") as file:
         test_set = file.read().split()
-    depthset = DepthSet(test_set)
+    depthSet = DepthSet(test_set)
     print(f'File Analyzed: {test_set_file}')
-    print(f'Number of increases: {depthset.increases}')
-    print(f'Number of decreases: {depthset.decreases}')
+    print(f'Number of increases (Unsummed): {depthSet.increases}')
+    print(f'Number of decreases (Unsummed): {depthSet.decreases}')
+    depthSet.check_deltas(3)
+    print(f'Number of increases (Summed by 3): {depthSet.increases}')
+    print(f'Number of decreases (Summed by 3): {depthSet.decreases}')
