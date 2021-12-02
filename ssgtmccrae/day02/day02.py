@@ -9,9 +9,10 @@ from pprint import pprint
 from typing import List
 import sys
 
-class Submarine():
+class Submarine_pt1():
     """
     Object to manage the y/z coorinates of a submarine based on a list of orders.
+    Utilizes instructions for Part 1 of challenge.
     Input: List of orders ([(direction, distance)])
     """
     pos_y = 0
@@ -22,6 +23,12 @@ class Submarine():
         self.move_submarine(move_orders)
 
     def validate_orders(self, move_orders):
+        """
+        Validates move_orders as valid for use.
+        Expects List of Tuples containing direction and distance.
+        Input: List of Tuples (string, int)
+        Output: None
+        """
         if type(move_orders) != list:
             raise ValueError("'move_orders' must be a list of tuples")
         for move in move_orders:
@@ -34,6 +41,11 @@ class Submarine():
                 raise ValueError("'move_orders' should be a list of tuples containing a direction (up,down,forward) and a distance")
 
     def move_submarine(self, move_orders):
+        """
+        Moves submarine per pt1 explanation.
+        Input: move_orders, list of tuples (validated)
+        Output: None
+        """
         for order in move_orders:
             match order[0]:
                 case 'up':
@@ -42,6 +54,25 @@ class Submarine():
                     self.pos_z += int(order[1])
                 case 'forward':
                     self.pos_y += int(order[1])
+
+class Submarine_pt2(Submarine_pt1):
+    """
+    Object to manage the y/z coorinates of a submarine based on a list of orders.
+    Utilizes instructions for Part 2 of challenge.
+    Input: List of orders ([(direction, distance)])
+    """
+    aim = 0
+
+    def move_submarine(self, move_orders):
+        for order in move_orders:
+            match order[0]:
+                case 'up':
+                    self.aim -= int(order[1])
+                case 'down':
+                    self.aim += int(order[1])
+                case 'forward':
+                    self.pos_y += int(order[1])
+                    self.pos_z += self.aim * int(order[1])
 
 if __name__ == '__main__':
     test_set_file = sys.argv[1]
@@ -52,8 +83,15 @@ if __name__ == '__main__':
             test_set[idx] = tuple(string.split(' '))
         else:
             test_set.pop(idx)
-    submarine = Submarine(test_set)
+    print('Performing analysis for pt1...')
+    submarine_1 = Submarine_pt1(test_set)
     print(f'File Analyzed: {test_set_file}')
-    print(f'Y Pos: {submarine.pos_y}')
-    print(f'Z Pos: {submarine.pos_z}')
+    print(f'Y Pos: {submarine_1.pos_y}')
+    print(f'Z Pos: {submarine_1.pos_z}')
+    print('Performing analysis for pt2...')
+    submarine_2 = Submarine_pt2(test_set)
+    print(f'File Analyzed: {test_set_file}')
+    print(f'Final Aim: {submarine_2.aim}')
+    print(f'Y Pos: {submarine_2.pos_y}')
+    print(f'Z Pos: {submarine_2.pos_z}')
 
