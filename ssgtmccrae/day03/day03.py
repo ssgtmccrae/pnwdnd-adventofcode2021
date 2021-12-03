@@ -15,12 +15,12 @@ class DiagnosicReport():
     Input: List of Binary valid 5 digit numbers.
     """
     diag_report = []
-    diag_counts = []
+    gamma_binary = []
 
     def __init__(self, diag_report):
         self.validate_diag_report(diag_report)
         self.diag_report = diag_report
-        self.process_diag_report()
+        self.process_gamma_binary()
 
     def validate_diag_report(self, diag_report):
         """
@@ -36,37 +36,36 @@ class DiagnosicReport():
                     (set_x == possible_values or set_x in possible_values)):
                 raise ValueError(f'items in diag_report should be similar length binary-valid numbers, {x} is invalid')
 
-    def process_diag_report(self):
+    def process_gamma_binary(self):
         """
         Processes gamma from diag report per Day03_pt1
         Input: None
         Output: None
         """
+        gamma_binary = []
         diag_counts = [0] * len(self.diag_report[0])
         for item in self.diag_report:
             for idx, x in enumerate([x for x in item]):
                 diag_counts[idx] += int(x)
-        self.diag_counts = diag_counts
-
-    def calculate_gamma_binary(self):
-        gamma_binary = []
-        for x in self.diag_counts:
+        for x in diag_counts:
             if (x > len(self.diag_report) / 2):
                 gamma_binary.append('1')
             else:
                 gamma_binary.append('0')
-        return ''.join(gamma_binary)
+        self.gamma_binary =  ''.join(gamma_binary)
 
     @property
     def gamma(self):
-        return(int(self.calculate_gamma_binary(),2))
+        return(int(self.gamma_binary,2))
 
     @property
     def epsilon(self):
         mask = '1' * len(self.diag_report[0])
-        return(int(self.calculate_gamma_binary(),2) ^ int(mask, 2))
+        return(int(self.gamma_binary,2) ^ int(mask, 2))
 
-
+"""     @property
+    def oxygen_generator_rating():
+ """
 
 if __name__ == '__main__':
     test_set_file = sys.argv[1]
@@ -77,6 +76,6 @@ if __name__ == '__main__':
             test_set.pop(idx)
 
     diagnostic = DiagnosicReport(test_set)
-    print(diagnostic.diag_counts)
+    print(diagnostic.gamma_binary)
     print(diagnostic.gamma)
     print(diagnostic.epsilon)
