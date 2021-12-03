@@ -24,17 +24,12 @@ def flip_ones_and_zeros(binary_number_as_string) -> str:
 def not_last_item(list_of_numbers) -> bool:
     return isinstance(list_of_numbers, list) and len(list_of_numbers) > 1
 
-def filter_until_one_remains(list_of_numbers, filter_by_most_common: bool) -> str:
+def filter_until_one_remains(list_of_numbers, filter_with) -> str:
     for index in range(12):
         if not_last_item(list_of_numbers):
-            most_common = get_most_common_digit_for_every_index(list_of_numbers)
-            check_for_most_common = lambda x: x[index] == most_common[index]
-            if filter_by_most_common:
-                list_of_numbers = list(filter(check_for_most_common, list_of_numbers))
-            else:
-                least_common = flip_ones_and_zeros(most_common)
-                check_for_least_common = lambda x: x[index] == least_common[index]
-                list_of_numbers = list(filter(check_for_least_common, list_of_numbers))
+            filter_result = filter_with(list_of_numbers)
+            check_filter = lambda char: char[index] == filter_result[index]
+            list_of_numbers = list(filter(check_filter, list_of_numbers))
         else:
             break
     return list_of_numbers[0]
@@ -43,10 +38,12 @@ most_common_digits = get_most_common_digit_for_every_index(day3_input[:])
 least_common_digits = flip_ones_and_zeros(most_common_digits)
 
 final_number_filtered_by_most_common = filter_until_one_remains(
-    day3_input[:], filter_by_most_common=True
+    day3_input[:],
+    filter_with=get_most_common_digit_for_every_index
 )
 final_number_filtered_by_least_common = filter_until_one_remains(
-    day3_input[:], filter_by_most_common=False
+    day3_input[:],
+    filter_with=lambda x: flip_ones_and_zeros(get_most_common_digit_for_every_index(x))
 )
 
 str_to_decimal = lambda x: int(x, 2)
