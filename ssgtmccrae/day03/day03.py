@@ -38,7 +38,7 @@ class DiagnosicReport():
 
     def process_gamma_binary(self):
         """
-        Processes gamma from diag report per Day03_pt1
+        Processes gamma binary value from diag report per Day03_pt1
         Input: None
         Output: None
         """
@@ -54,18 +54,57 @@ class DiagnosicReport():
                 gamma_binary.append('0')
         self.gamma_binary =  ''.join(gamma_binary)
 
+    def process_gen_scrubber_rating(self, gas_type):
+        """
+        Processes o2 generator rating from diag report per Day03_pt2
+        Input: None
+        Output: None
+        """
+        diag_report = self.diag_report.copy()
+
+        match gas_type:
+            case 'o2':
+                alpha = '1'
+                beta = '0'
+            case 'co2':
+                alpha = '0'
+                beta = '1'
+
+        for idx, iter in enumerate(range(len(diag_report[0]))):
+            val = 0
+            if len(diag_report) > 1:
+                for item in diag_report:
+                    match item[idx]:
+                        case '0':
+                            val -= 1
+                        case '1':
+                            val += 1
+                if val >= 0:
+                    diag_report = [x for x in diag_report if x[idx] == alpha]
+                else:
+                    diag_report = [x for x in diag_report if x[idx] == beta]
+        return int(diag_report[0],2)
+
     @property
     def gamma(self):
+        """Returns 'gamma' power value from provided diag_report"""
         return(int(self.gamma_binary,2))
 
     @property
     def epsilon(self):
+        """Returns 'epsilon' (XOR gamma) power value from provided diag_report"""
         mask = '1' * len(self.diag_report[0])
         return(int(self.gamma_binary,2) ^ int(mask, 2))
 
-"""     @property
-    def oxygen_generator_rating():
- """
+    @property
+    def o2_generator_rating(self):
+        """Returns 02 Generator rating from provided diag_report"""
+        return(self.process_gen_scrubber_rating('o2'))
+
+    @property
+    def co2_scrubber_rating(self):
+        """Returns C02 Scrubber rating from provided diag_report"""
+        return(self.process_gen_scrubber_rating('co2'))
 
 if __name__ == '__main__':
     test_set_file = sys.argv[1]
@@ -74,8 +113,8 @@ if __name__ == '__main__':
     for idx, string in enumerate(test_set):
         if string == '':
             test_set.pop(idx)
-
     diagnostic = DiagnosicReport(test_set)
-    print(diagnostic.gamma_binary)
-    print(diagnostic.gamma)
-    print(diagnostic.epsilon)
+    print(f'Gamma: {diagnostic.gamma}')
+    print(f'Epsilon: {diagnostic.epsilon}')
+    print(f'O2: {diagnostic.o2_generator_rating}')
+    print(f'CO2: {diagnostic.co2_scrubber_rating}')
