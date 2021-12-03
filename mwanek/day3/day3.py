@@ -24,25 +24,17 @@ def flip_ones_and_zeros(binary_number_as_string) -> str:
 def not_last_item(list_of_numbers) -> bool:
     return isinstance(list_of_numbers, list) and len(list_of_numbers) > 1
 
-def filter_and_return(filter_by, list_of_numbers, index):
-    new_list = []
-    for binary_number in list_of_numbers:
-        if not_last_item(list_of_numbers):
-            if filter_by[index] == binary_number[index]:
-                new_list.append(binary_number)
-        else:
-            break
-    return new_list
-
 def filter_until_one_remains(list_of_numbers, filter_by_most_common: bool) -> str:
     for index in range(12):
         if not_last_item(list_of_numbers):
             most_common = get_most_common_digit_for_every_index(list_of_numbers)
+            check_for_most_common = lambda x: x[index] == most_common[index]
             if filter_by_most_common:
-                list_of_numbers = filter_and_return(most_common, list_of_numbers, index)
+                list_of_numbers = list(filter(check_for_most_common, list_of_numbers))
             else:
                 least_common = flip_ones_and_zeros(most_common)
-                list_of_numbers = filter_and_return(least_common, list_of_numbers, index)
+                check_for_least_common = lambda x: x[index] == least_common[index]
+                list_of_numbers = list(filter(check_for_least_common, list_of_numbers))
         else:
             break
     return list_of_numbers[0]
