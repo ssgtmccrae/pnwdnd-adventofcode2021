@@ -1,8 +1,9 @@
-#from aocd import data as day4_input # pylint: disable=no-name-in-module
+from aocd import data as day4_input # pylint: disable=no-name-in-module
 import math
 import itertools as it
 import re
 from dataclasses import dataclass
+from termcolor import colored
 
 test_input = """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
@@ -24,6 +25,7 @@ test_input = """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,
 22 11 13  6  5
  2  0 12  3  7
 """
+
 
 @dataclass
 class BingoCoord:
@@ -52,23 +54,40 @@ class BingoBoard:
             my_coord = my_coord[0]
             self.total_marked += 1
             self.board[my_coord].marked = True
-            if self.total_marked >= 5:
-                if all([value.marked for coord, value in self.board.items() if coord[0] == my_coord[0]]):
-                    #print("Horizontal:", [value for coord, value in self.board.items() if coord[0] == my_coord[0]])
-                    #print(self.board[(0,0)])
+            #print(f"I marked {number_to_mark} on this board: ")
+            #self.print_board()
+            #input()
+            return True
+        return False
+
+    def find_bingo(self):
+        if self.total_marked >= 5:
+            for i in range(5):
+                if all([value.marked for coord, value in self.board.items() if coord[0] == i]):
+                    #print(f"Horizontal Bingo! Sum: {str(self.board_sum)}")
                     return True
-                elif all([value.marked for coord, value in self.board.items() if coord[1] == my_coord[1]]):
-                    #print([value for coord, value in self.board.items() if coord[1] == my_coord[1]])
-                    #print("Vertical:",[(value.marked, value.value) for value in self.board.values()])
-                    #print(self.board[(0,0)])
+                elif all([value.marked for coord, value in self.board.items() if coord[1] == i]):
+                    #print(f"Vertical Bingo! Sum: {str(self.board_sum)}")
                     return True
         return False
+
+
+    def print_board(self):
+        print()
+        for i in range(5):
+            print()
+            for j in range(5):
+                if self.board[i, j].marked:
+                    print(colored("{:>2}".format(str(self.board[i, j].value)), on_color="on_green", attrs=['bold']), end=" ")
+                else:
+                    print("{:2}".format(str(self.board[i,j].value)), end=" ")
+        print()
 
     @property
     def board_sum(self):
         return sum([value.value for value in self.board.values() if not value.marked])
 
-split_input = test_input.split('\n\n')
+split_input = day4_input.split('\n\n')
 numbers_to_call = split_input.pop(0).strip().split(',')
 boards = split_input
 
@@ -85,10 +104,16 @@ bingo_boards = [BingoBoard(board) for board in boards]
 #    print([value.marked for coord, value in board.board.items() if value == 16])
 
 for num in numbers_to_call:
-    for board in bingo_boards:
-        bingo = board.mark_value(int(num))
-        if bingo:
-            print(board.board_sum * int(num))
-            bingo_boards.remove(board)
+    if not bingo_boards:
+        break
+    #print(f"Calling: {num}")
+    for board in bingo_boards[:]:
+        marked = board.mark_value(int(num))
+        if marked:
+            if board.find_bingo():
+                bingo_boards.remove(board)
+                #print("Board sum:", int(num) * board.board_sum)
             if not bingo_boards:
-                quit()
+                print("Last sum:", int(num) * board.board_sum)
+                break
+        marked = False
