@@ -8,6 +8,7 @@ authors = [
 dependencies = [
     "ipython~=7.30",
     "pylint~=2.12",
+    "numpy~=1.21",
 ]
 requires-python = ">=3.10"
 license = {text = "GPLv3"}
