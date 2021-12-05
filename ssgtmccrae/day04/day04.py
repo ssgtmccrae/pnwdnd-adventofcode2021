@@ -42,8 +42,9 @@ class BingoCard():
     def call_number(self, _number):
         """
         Modifies card mask with if number exists on card in one or more location.
+        Input: _number (int)
         """
-        mask_item = self.check_card(_number)
+        mask_item = self.check_card(int(_number))
         if mask_item is not None:
             for coord in mask_item:
                 self.card_mask[coord] = 0
@@ -88,7 +89,7 @@ class BingoGame():
         numbers_called = []
 
         while len(winning_cards) == 0 and len(current_numbers) > 0:
-            _number = int(current_numbers.pop(0))
+            _number = current_numbers.pop(0)
             numbers_called.append(_number)
             print(f'Calling number: {_number}')
             for _card in self.cards:
@@ -99,8 +100,14 @@ class BingoGame():
         if len(winning_cards) > 0:
             print('Winning Cards Found!')
             print(f'Numbers Called: {numbers_called}')
+            print(f'Last number called: {numbers_called[-1]}')
             for _card in winning_cards:
+                print('Card:')
                 pprint(_card.card)
+                print('Unmarked Numbers:')
+                unmarked_card = _card.card_mask * _card.card
+                pprint(unmarked_card)
+                print(f'Sum: {unmarked_card.sum()}')
         else:
             print('No winning cards found :-(')
 
