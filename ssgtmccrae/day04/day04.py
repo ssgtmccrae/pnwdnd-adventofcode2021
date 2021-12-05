@@ -127,31 +127,5 @@ if __name__ == '__main__':
     with open(bingo_numbers_file, 'r', encoding="utf-8") as file:
         number_list = file.read()
     numbers_clean = number_list.strip().split(',')
-
-    # print('===========')
-    # print('number_list')
-    # print('===========')
-    # pprint(numbers_clean)
-
-    # print('===========')
-    # print('card_list')
-    # print('===========')
-    # pprint(cards_clean)
-
-    print(numbers_clean)
-    # bingo = BingoGame(cards_clean, numbers_clean)
     bingo = BingoGame(cards_clean, numbers_clean)
     bingo.run_game()
-    # pprint(bingo.cards[0].card)
-    # pprint(bingo.cards[0].check_winning_status())
-    # for x in [83,67,12,59,98,4]:
-    #     bingo.cards[0].call_number(x)
-    # pprint(bingo.cards[0].card_mask)
-    # pprint(bingo.cards[0].check_winning_status())
-    # for x in [83, 50, 75, 12,  36]:
-    #     bingo.cards[0].call_number(x)
-    # pprint(bingo.cards[0].check_winning_status())
-    # pprint(bingo.cards[0].card_mask)
-
-
-    # pprint(bingo.numbers)
