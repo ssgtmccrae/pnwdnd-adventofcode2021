@@ -9,7 +9,13 @@ from pprint import pprint
 import sys
 import numpy as np
 
-def determineIntersects(grid_size, coord_list):
+def determine_intersects(grid_size, coord_list):
+    """
+    Determins intersection points > strength 1, on the assumption that all lines are either vertical, horizontal, or 45deg
+    using a Numpy array.
+    Input: grid_size (int), coord_list (List[List[tuple(int,int)]])
+    Output: None
+    """
     grid = np.zeros((grid_size, grid_size))
     for coord_pair in coord_list:
         current_coord = coord_pair[0]
@@ -25,8 +31,6 @@ def determineIntersects(grid_size, coord_list):
             if current_coord == coord_pair[1]:
                 grid[current_coord] += 1
                 break
-
-    pprint(grid)
     intersects_array = np.where(grid >= 2)
     intersects_list = []
     for idx in range(len(intersects_array[0].tolist())):
