@@ -88,12 +88,12 @@ class BingoGame():
         numbers_called = []
 
         while len(winning_cards) == 0 and len(current_numbers) > 0:
-            _number = current_numbers.pop(0)
+            _number = int(current_numbers.pop(0))
             numbers_called.append(_number)
             print(f'Calling number: {_number}')
             for _card in self.cards:
                 _card.call_number(_number)
-                pprint(_card.card_mask)
+                # pprint(_card.card_mask)
                 if _card.check_winning_status() != False:
                     winning_cards.append(_card)
         if len(winning_cards) > 0:
