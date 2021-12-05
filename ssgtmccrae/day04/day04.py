@@ -5,11 +5,8 @@ https://adventofcode.com/2021/day/4
 """
 
 import sys
-import numpy as np
 from pprint import pprint
-
-from numpy.lib.index_tricks import CClass
-
+import numpy as np
 class BingoCard():
     """
     Manage a single Bingo Card.
@@ -17,6 +14,9 @@ class BingoCard():
     """
     card = None
     card_mask = None
+    last_called = []
+    numbers_called = 0
+    winning_rowcol = None
 
     def __init__(self, listed_card):
         self.card = np.array(listed_card, int)
@@ -33,21 +33,24 @@ class BingoCard():
         for idx in range(dimensions):
             # check_row
             if masked_card[idx, :].sum() == 0:
-                return f'row: {idx}'
+                self.winning_rowcol = f'row: {idx}'
             # check_column
             if masked_card[:, idx].sum() == 0:
-                return f'column: {idx}'
-        return False
+                self.winning_rowcol = f'column: {idx}'
 
     def call_number(self, _number):
         """
         Modifies card mask with if number exists on card in one or more location.
         Input: _number (int)
         """
-        mask_item = self.check_card(int(_number))
-        if mask_item is not None:
-            for coord in mask_item:
-                self.card_mask[coord] = 0
+        if self.winning_rowcol is None:
+            self.last_called = _number
+            self.numbers_called += 1
+            mask_item = self.check_card(int(_number))
+            if mask_item is not None:
+                for coord in mask_item:
+                    self.card_mask[coord] = 0
+            self.check_winning_status()
 
     def check_card(self, number):
         """
@@ -61,8 +64,9 @@ class BingoCard():
             for idx in range(len(loc[0].tolist())):
                 loc_list.append((loc[0].tolist()[idx], loc[1].tolist()[idx]))
             return loc_list
-        else:
-            return None
+        return None
+
+
 class BingoGame():
     """
     Handle bingo game, manage bingo cards. Cycles through bingo numbers, filling out cards and determining wins.
@@ -84,32 +88,25 @@ class BingoGame():
         Output: None
         """
 
-        winning_cards = []
-        current_numbers = self.numbers.copy()
-        numbers_called = []
+        print(len(self.cards))
 
-        while len(winning_cards) == 0 and len(current_numbers) > 0:
-            _number = current_numbers.pop(0)
-            numbers_called.append(_number)
+        for _number in self.numbers:
             print(f'Calling number: {_number}')
             for _card in self.cards:
                 _card.call_number(_number)
-                # pprint(_card.card_mask)
-                if _card.check_winning_status() != False:
-                    winning_cards.append(_card)
-        if len(winning_cards) > 0:
-            print('Winning Cards Found!')
-            print(f'Numbers Called: {numbers_called}')
-            print(f'Last number called: {numbers_called[-1]}')
-            for _card in winning_cards:
+        self.cards.sort(key= lambda x: x.numbers_called)
+        print('Winning Cards Found:')
+        for _card in self.cards:
+            if _card.winning_rowcol is not None:
                 print('Card:')
                 pprint(_card.card)
                 print('Unmarked Numbers:')
                 unmarked_card = _card.card_mask * _card.card
                 pprint(unmarked_card)
                 print(f'Sum: {unmarked_card.sum()}')
-        else:
-            print('No winning cards found :-(')
+                print(f'Winning Row/Col: {_card.winning_rowcol}')
+                print(f'Last number called: {_card.last_called}')
+                print(f'Numbers Called: {_card.numbers_called}')
 
 if __name__ == '__main__':
     bingo_cards_file, bingo_numbers_file = sys.argv[1], sys.argv[2]
@@ -141,6 +138,7 @@ if __name__ == '__main__':
     # print('===========')
     # pprint(cards_clean)
 
+    print(numbers_clean)
     # bingo = BingoGame(cards_clean, numbers_clean)
     bingo = BingoGame(cards_clean, numbers_clean)
     bingo.run_game()
