@@ -49,4 +49,4 @@ if __name__ == '__main__':
                 for coord in line.split(' '):
                     coord_pair.append(tuple([int(x) for x in coord.strip('()').split(',')]))
                 coords.append(coord_pair)
-    determineIntersects(grid_size=1000, coord_list=coords)
+    determine_intersects(grid_size=1000, coord_list=coords)
