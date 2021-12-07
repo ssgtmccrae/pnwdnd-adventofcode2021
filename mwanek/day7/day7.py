@@ -1,4 +1,5 @@
 from aocd import data as day7_data
+from functools import cache
 import time
 
 start_time = time.perf_counter()
@@ -18,21 +19,17 @@ for dest in range(crab_min, crab_max+1):
 part1_answer = low_cost
 
 # Part Two:
-costs = {}
-cost_calc = lambda source, dest, dist: (dist / 2 ) * (dist + 1)
-low_cost = cost_calc(crab_min, crab_max, crab_max-crab_min) * crab_len
+@cache
+def cost_calc(dist):
+    return (dist / 2 ) * (dist + 1)
+
+low_cost = cost_calc(crab_max-crab_min) * crab_len
+
 for dest in range(crab_min, crab_max+1):
     fuel_cost = []
     for source in crabs:
         dist = abs(dest-source)
-        if dist in costs:
-            fuel_cost.append(costs[dist])
-            #print('match')
-        else:
-            my_cost = cost_calc(dest, source, dist)
-            costs[dist] = my_cost
-            fuel_cost.append(my_cost)
-        #print(source, dest, dist, my_cost)
+        fuel_cost.append(cost_calc(dist))
     fuel_sum = sum(fuel_cost)
     if fuel_sum < low_cost:
         low_cost = fuel_sum
