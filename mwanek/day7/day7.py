@@ -2,12 +2,12 @@ from aocd import data as day7_data
 from functools import cache
 import time
 
-start_time = time.perf_counter()
-
 crabs = [int(s) for s in day7_data.strip().split(',')]
 crab_min, crab_max, crab_len = min(crabs), max(crabs), len(crabs)
 
 # Part One:
+part1_start_time = time.perf_counter()
+
 low_cost = (crab_max - crab_min) * crab_len
 for dest in range(crab_min, crab_max+1):
     fuel_cost = []
@@ -18,7 +18,12 @@ for dest in range(crab_min, crab_max+1):
         low_cost = fuel_sum
 part1_answer = low_cost
 
+part1_end_time = time.perf_counter()
+part1_time = part1_end_time - part1_start_time
+
 # Part Two:
+part2_start_time = time.perf_counter()
+
 @cache
 def cost_calc(dist):
     return (dist / 2 ) * (dist + 1)
@@ -35,8 +40,8 @@ for dest in range(crab_min, crab_max+1):
         low_cost = fuel_sum
 part2_answer = int(low_cost)
 
-end_time = time.perf_counter()
+part2_end_time = time.perf_counter()
+part2_time = part2_end_time - part2_start_time
 
-print(f"Part 1 answer: {part1_answer}")
-print(f"Part 2 answer: {part2_answer}")
-print(f"Seconds to calculate: {end_time - start_time:0.4f}")
+print(f"Part 1 answer ({part1_time:0.4f}s): {part1_answer}")
+print(f"Part 2 answer ({part2_time:0.4f}s): {part2_answer}")
