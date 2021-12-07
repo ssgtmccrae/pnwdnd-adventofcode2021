@@ -1,6 +1,6 @@
-from aocd import data as day5_data
+from aocd import data as day6_data
 
-ages = [int(x) for x in day5_data.strip().split(',')]
+ages = [int(x) for x in day6_data.strip().split(',')]
 
 def fish(days, ages):
     days_to_run = days + 1

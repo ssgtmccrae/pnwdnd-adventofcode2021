@@ -2,7 +2,7 @@ from aocd import data as day5_data
 
 test_data = """3,4,3,1,2"""
 
-ages = [int(x) for x in day5_data.split(',')]
+ages = [int(x) for x in day6_data.split(',')]
 
 class LanternFish:
     def __init__(self, fish_age = None) -> None:
