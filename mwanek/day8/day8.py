@@ -1,19 +1,7 @@
-from aocd import data as day8_data
 from collections import namedtuple
-import copy
-test_data = """be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
-edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
-fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
-fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega | efabcd cedba gadfec cb
-aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga | gecf egdcabf bgf bfgea
-fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | gebdcfa ecba ca fadegcb
-dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf | cefg dcbef fcge gbcadfe
-bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbgef
-egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
-gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
-"""
 
-data = day8_data.strip().split('\n')
+with open("input.txt", "r") as file:
+    data = file.read().strip().split('\n')
 
 raw_signals = [s.split('|') for s in data]
 
@@ -24,60 +12,85 @@ signals = []
 for signal in raw_signals:
     signals.append(
         SignalData(
-            signal[0].strip().split(),
-            signal[1].strip().split()
+            sorted([set(s) for s in signal[0].strip().split()], key=len),
+            [set(s) for s in signal[1].strip().split()]
         )
     )
 
+output_totals = []
+for signal in signals:
+    digits = [None for _ in range(10)]
+    digits[1] = signal.input[0]
+    digits[4] = signal.input[2]
+    digits[7] = signal.input[1]
+    digits[8] = signal.input[9]
+    # Solve for 9, 0, 6
+    if digits[4].issubset(signal.input[6]):
+        digits[9] = signal.input[6]
+        if digits[7].issubset(signal.input[7]):
+            digits[0] = signal.input[7]
+            digits[6] = signal.input[8]
+        else:
+            digits[0] = signal.input[8]
+            digits[6] = signal.input[7]
+    elif digits[4].issubset(signal.input[7]):
+        digits[9] = signal.input[7]
+        if digits[7].issubset(signal.input[6]):
+            digits[0] = signal.input[6]
+            digits[6] = signal.input[8]
+        else:
+            digits[0] = signal.input[8]
+            digits[6] = signal.input[6]
+    else:
+        digits[9] = signal.input[8]
+        if digits[7].issubset(signal.input[7]):
+            digits[0] = signal.input[7]
+            digits[6] = signal.input[6]
+        else:
+            digits[0] = signal.input[6]
+            digits[6] = signal.input[7]
+    # Solve for 3, 5, 2
+    if digits[1].issubset(signal.input[3]):
+        digits[3] = signal.input[3]
+        if len(digits[4] & signal.input[4]) == 3:
+            digits[5] = signal.input[4]
+            digits[2] = signal.input[5]
+        else:
+            digits[5] = signal.input[5]
+            digits[2] = signal.input[4]
+    elif digits[1].issubset(signal.input[4]):
+        digits[3] = signal.input[4]
+        if len(digits[4] & signal.input[3]) == 3:
+            digits[5] = signal.input[3]
+            digits[2] = signal.input[5]
+        else:
+            digits[5] = signal.input[5]
+            digits[2] = signal.input[3]
+    else:
+        digits[3] = signal.input[5]
+        if len(digits[4] & signal.input[4]) == 3:
+            digits[5] = signal.input[4]
+            digits[2] = signal.input[3]
+        else:
+            digits[5] = signal.input[3]
+            digits[2] = signal.input[4]
+    output_total = 0
+    for i in range(10):
+        if digits[i] == signal.output[0]:
+            output_total += i * 1000
+        if digits[i] == signal.output[1]:
+            output_total += i * 100
+        if digits[i] == signal.output[2]:
+            output_total += i * 10
+        if digits[i] == signal.output[3]:
+            output_total += i
+    output_totals.append(output_total)
+print(sum(output_totals))
+
+# Old part1:
 #uniq_amt = [2, 3, 4, 7]
 #check_uniq = lambda s: len(set(s)) in uniq_amt
 #uniques = []
 #for signal in signals:
 #    uniques.append(len([ uniq for uniq in signal.output if check_uniq(uniq) ]))
 #print(sum(uniques))
-
-output_sums = []
-for signal in signals:
-    digits = ["" for _ in range(10)]
-    digits[1] = [s for s in signal.input if len(s) == 2].pop()
-    digits[4] = [s for s in signal.input if len(s) == 4].pop()
-    digits[7] = [s for s in signal.input if len(s) == 3].pop()
-    digits[8] = [s for s in signal.input if len(s) == 7].pop()
-    rights = digits[1]
-    for string in signal.input:
-        if all(char in string for char in rights) and len(string) == 5:
-            digits[3] = string
-    lefts = copy.copy(digits[8])
-    for char in list(digits[3]):
-        lefts = lefts.replace(char, '')
-    for string in signal.input:
-        if len(string) == 6:
-            if all(char in string for char in lefts):
-                if sum([char in string for char in rights]) == 1:
-                    digits[6] = string
-    for string in signal.input:
-        if len(string) == 6:
-            if all(char in string for char in lefts):
-                if all([char in string for char in rights]):
-                    digits[0] = string
-    for string in signal.input:
-        if len(string) == 6 and string != digits[0] and string != digits[6]:
-            digits[9] = string
-    topleft = copy.copy(digits[4])
-    for char in list(digits[3]):
-        topleft = topleft.replace(char, '')
-    bottomleft = lefts.replace(topleft, '')
-    for string in signal.input:
-        if len(string) == 5 and string != digits[3]:
-            if topleft in string and not bottomleft in string:
-                digits[5] = string
-            else:
-                digits[2] = string
-
-    digits = [''.join(sorted(list(digit))) for digit in digits]
-    outputs = [''.join(sorted(list(digit))) for digit in signal.output]
-    my_output = ""
-    for output in outputs:
-        my_output += str(digits.index(output))
-    output_sums.append(int(my_output))
-print(sum(output_sums))
