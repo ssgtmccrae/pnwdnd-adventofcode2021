@@ -15,8 +15,6 @@ test_data = """
 9899965678
 """
 
-
-
 rawmap = []
 for line in data.strip().split():
     rawmap.append([int(p) for p in line])
@@ -72,6 +70,7 @@ def find_basin(heightmap: HeightMap, visited, point):
     for point_to_check in valid_adjacent_points(heightmap, point):
         if point_to_check not in visited:
             visited += my_basin
+            visited += point_to_check
             my_basin += find_basin(heightmap, visited, point_to_check)
     return my_basin
 
@@ -81,6 +80,8 @@ for point in lowpoints:
     claimed += point
     my_basin = find_basin(heightmap, claimed, point)
     claimed += my_basin
-    basin_sizes.append(len(my_basin))
+    basin_sizes.append(len(set(my_basin))) # Why were there extra points? It's a mystery,
 
-print(np.prod(sorted(basin_sizes, reverse=True)[0:3]))
+print(basin_sizes)
+
+print(sorted(basin_sizes, reverse=True)[0:3])
