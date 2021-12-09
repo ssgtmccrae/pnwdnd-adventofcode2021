@@ -77,10 +77,9 @@ def find_basin(heightmap: HeightMap, visited, point):
 basin_sizes = []
 claimed = []
 for point in lowpoints:
-    claimed += point
     my_basin = find_basin(heightmap, claimed, point)
     claimed += my_basin
-    basin_sizes.append(len(set(my_basin))) # Why were there extra points? It's a mystery, Andrew.
+    basin_sizes.append(len(my_basin))
 
 print(basin_sizes)
 
