@@ -21,7 +21,7 @@ syntax_error_score_for = dict(zip(closers, [3,57,1197,25137]))
 completion_score_for = dict(zip(openers, [1,2,3,4]))
 
 syntax_error_total = 0
-completion_score_totals = []
+completion_scores = []
 
 for line in data:
     my_stack = deque()
@@ -43,9 +43,9 @@ for line in data:
             opener = my_stack.pop()
             my_completion_score *= 5
             my_completion_score += completion_score_for[opener]
-        completion_score_totals.append(my_completion_score)
+        completion_scores.append(my_completion_score)
 
-median_completion_score = round(np.median(completion_score_totals))
+median_completion_score = round(np.median(completion_scores))
 
 print(f"Part 1, syntax error score: {syntax_error_total}")
 print(f"Part 2, median autocomplete score: {median_completion_score}")
