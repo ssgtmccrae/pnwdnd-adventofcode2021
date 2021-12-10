@@ -1,8 +1,9 @@
 from collections import namedtuple
-import numpy as np
 from collections import deque
+import numpy as np
 
-with open("input.txt", "r") as file:
+
+with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip().split('\n')
 
 Pair = namedtuple("Pair", "opener, closer")
