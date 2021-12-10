@@ -29,7 +29,7 @@ for line in data:
     for char in line:
         if char in opening_chars:
             my_stack.append(char)
-        elif char in closeing_chars:
+        elif char in closing_chars:
             opener = my_stack.pop()
             if opener != opener_for[char]:
                 syntax_error_total += syntax_error_scores[char]
