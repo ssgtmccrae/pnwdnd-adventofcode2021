@@ -2,7 +2,6 @@ from collections import namedtuple
 from collections import deque
 import numpy as np
 
-
 with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip().split('\n')
 
