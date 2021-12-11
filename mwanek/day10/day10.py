@@ -26,24 +26,24 @@ completion_scores = []
 for line in data:
     my_stack = deque()
     syntax_error = False
-    for character in line:
-        if character in openers:
-            my_stack.append(character)
-        elif character in closers:
-            opener = my_stack.pop()
-            if opener is not opener_for[character]:
-                syntax_error_total += syntax_error_score_for[character]
-                syntax_error = True
-                break
-        else:
-            raise KeyError
-    if not syntax_error:
+    try:
+        for character in line:
+            if character in openers:
+                my_stack.append(character)
+            elif character in closers:
+                opener = my_stack.pop()
+                if opener is not opener_for[character]:
+                    raise SyntaxError
+            else:
+                raise KeyError
         my_completion_score = 0
         while len(my_stack) > 0:
             opener = my_stack.pop()
             my_completion_score *= 5
             my_completion_score += completion_score_for[opener]
         completion_scores.append(my_completion_score)
+    except SyntaxError:
+        syntax_error_total += syntax_error_score_for[character]
 
 median_completion_score = round(np.median(completion_scores))
 
