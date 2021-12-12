@@ -104,15 +104,15 @@ if __name__ == '__main__':
     # pprint(decrypted_displays) # Test code
 
     # Pt1
-    pt1_total = 0
+    PT1_TOTAL = 0
     for display in decrypted_displays:
         for item in display['decoded_output']:
             if item in ['1','4','7','8']:
-                pt1_total += 1
-    print(f'==Part One Answer== \n{pt1_total}')
+                PT1_TOTAL += 1
+    print(f'==Part One Answer== \n{PT1_TOTAL}')
 
     # Pt2
-    pt2_total = 0
+    PT2_TOTAL = 0
     for display in decrypted_displays:
-        pt2_total += int(''.join(display['decoded_output']))
-    print(f'==Part Two Answer== \n{pt2_total}')
+        PT2_TOTAL += int(''.join(display['decoded_output']))
+    print(f'==Part Two Answer== \n{PT2_TOTAL}')
