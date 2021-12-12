@@ -43,6 +43,8 @@ for y, row in enumerate(rawmap):
         if height < left and height < right and height < down and height < up:
             lowpoints.append((y,x))
 
+print("Part 1:", sum([rawmap[y][x]+1 for y,x in lowpoints]))
+
 HeightMap = namedtuple("HeightMap", "map y_max x_max")
 
 heightmap = HeightMap(rawmap, y_max, x_max)
@@ -67,6 +69,7 @@ def valid_adjacent_points(heightmap: HeightMap, point):
 
 def find_basin(heightmap: HeightMap, visited, point):
     my_basin = [point]
+    visited += my_basin
     for point_to_check in valid_adjacent_points(heightmap, point):
         if point_to_check not in visited:
             visited += my_basin
@@ -77,15 +80,9 @@ def find_basin(heightmap: HeightMap, visited, point):
 basin_sizes = []
 claimed = []
 for point in lowpoints:
+    claimed += point
     my_basin = find_basin(heightmap, claimed, point)
     claimed += my_basin
-    basin_sizes.append(len(set(my_basin))) # Why were there extra points? It's a mystery,
+    basin_sizes.append(len(my_basin))
 
-print(basin_sizes)
-
-<<<<<<< HEAD
-=======
-print(basin_sizes)
-
->>>>>>> de468097d45e1f11c06e405ea6733a6f32ce02dd
-print(sorted(basin_sizes, reverse=True)[0:3])
+print("Part 2:", np.prod(sorted(basin_sizes, reverse=True)[0:3]))
