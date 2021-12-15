@@ -1,70 +1,68 @@
-from collections import defaultdict, namedtuple
-
+from collections import defaultdict
+from dataclasses import dataclass
 
 with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip().split('\n')
 
-test_data = """start-A
-start-b
-A-c
-A-b
-b-d
-A-end
-b-end
-"""
-data = test_data.strip().split('\n')
+@dataclass
+class Node:
+    name: str
+    path: list
+
+def number_of_paths(connections, limited_nodes, limit):
+    start = "start"
+    end = "end"
+    start_node = Node(start, [start])
+    end_node = Node(end, [end])
+
+    to_visit = []
+    to_visit.append(start_node)
+    found_paths = []
+
+    while to_visit:
+        current_node = to_visit[0]
+        to_visit.pop(0)
+
+        if current_node.name == end_node.name:
+            found_paths.append(current_node)
+            continue
+
+        child_nodes = []
+
+        for next_node in connections[current_node.name]:
+            new_node = Node(next_node, current_node.path + [next_node])
+            child_nodes.append(new_node)
+
+        for child in child_nodes:
+            if child.name == start:
+                continue
+            if child.name in limited_nodes:
+                limits_reached = 0
+                for node in limited_nodes:
+                    node_count = child.path.count(node)
+                    if node_count > 2:
+                        limits_reached += 2
+                    if node_count > 1:
+                        limits_reached += 1
+                if limits_reached > limit:
+                    continue
+            to_visit.append(child)
+
+    return(len(found_paths))
 
 caves = defaultdict(list)
-small_caves = []
-big_caves = []
-all_caves = []
+small_caves = set()
 
 for line in data:
-    new_cave = line.split('-')
-    caves[new_cave[0]].append(new_cave[1])
-    caves[new_cave[1]].append(new_cave[0])
-    all_caves.append(new_cave[0])
-    all_caves.append(new_cave[1])
-    if new_cave[0].isupper():
-        big_caves.append(new_cave[0])
-    else:
-        small_caves.append(new_cave[0])
-    if new_cave[1].isupper():
-        big_caves.append(new_cave[1])
-    else:
-        small_caves.append(new_cave[1])
+    cave, next_cave = line.split('-')
+    caves[cave].append(next_cave)
+    caves[next_cave].append(cave)
+    if cave.islower():
+        small_caves.add(cave)
+    if next_cave.islower():
+        small_caves.add(next_cave)
 
-small_caves = set(small_caves)
-big_caves = set(big_caves)
-all_caves = list(set(all_caves))
+caves = dict(caves)
 
-#print(caves)
-#print(big_caves)
-#print(small_caves)
-#print(all_caves)
-
-my_paths = []
-
-def find_all_paths(current, dest, visited, path):
-    cave_id = all_caves.index(current)
-    visited[cave_id] += 1
-    path.append(current)
-
-    if current == dest:
-        my_paths.append(path)
-    else:
-        for neighbor in caves[current]:
-            neighbor_id = all_caves.index(neighbor)
-            if not visited[neighbor_id]:
-                find_all_paths(neighbor, dest, visited, path)
-
-    small_id = all_caves.index(path[-1])
-    if visited[small_id] > 1 and path[-1] in small_caves:
-        path.pop()
-    path[cave_id] = 0
-
-empty_path = []
-to_visit = [0] * len(all_caves)
-
-find_all_paths('start', 'end', to_visit, empty_path)
-print(len(my_paths))
+print("Part 1, one visit per small cave:", number_of_paths(caves, small_caves, 0))
+print("Part 2, same + two visits for one small cave:", number_of_paths(caves, small_caves, 1))
