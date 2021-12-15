@@ -1,29 +1,5 @@
-from collections import namedtuple
-from pprint import pprint
-
-
 with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip().split('\n')
-
-test_data = """NNCB
-
-CH -> B
-HH -> N
-CB -> H
-NH -> C
-HB -> C
-HC -> B
-HN -> C
-NN -> C
-BH -> H
-NC -> B
-NB -> B
-BN -> B
-BB -> N
-BC -> B
-CC -> N
-CN -> C"""
-#data = test_data.strip().split('\n')
 
 template = data[0]
 

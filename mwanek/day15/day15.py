@@ -1,23 +1,6 @@
 import numpy as np
-import time
 with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip().split('\n')
-
-test_data = """1163751742
-1381373672
-2136511328
-3694931569
-7463417111
-1319128137
-1359912421
-3125421639
-1293138521
-2311944581
-"""
-#data = test_data.strip().split('\n')
-
-start_time = time.perf_counter()
-
 class Node:
     def __init__(self, parent=None, position=None) -> None:
         self.parent = parent
@@ -37,7 +20,7 @@ def navigate(risk_map, start, end):
     to_visit.append(start_node)
 
     iterations = 0
-    max_iterations = (len(risk_map) // 2) ** 7
+    max_iterations = (len(risk_map) // 2) ** 6
 
     moves = [ (-1,  0),
               ( 1,  0),
@@ -48,8 +31,7 @@ def navigate(risk_map, start, end):
     while to_visit:
         iterations += 1
         if iterations > max_iterations:
-            print(f"Too many iterations: {iterations}")
-            return False
+            raise RuntimeWarning(f"Too many iterations: {iterations}")
 
         current_node = to_visit[0]
         current_index = 0
@@ -85,11 +67,6 @@ def navigate(risk_map, start, end):
             if [n for n in to_visit if child.position == n.position and child.cost >= n.cost]:
                 continue
             to_visit.append(child)
-
-        #print("Current:", current_node.position, current_node.cost)
-        #print("Visited:", [(node.position, node.cost) for node in visited])
-        #print("Queue:", [(node.position, node.cost) for node in to_visit])
-        #input()
 
 def bigger_map(starting_map):
     row = []
@@ -132,5 +109,3 @@ final_big_node = navigate(big_map, big_start, big_end)
 
 print("Part 1, final cost:", final_node.cost)
 print("Part 2, final cost:", final_big_node.cost)
-
-print(time.perf_counter() - start_time)
