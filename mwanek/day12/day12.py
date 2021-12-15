@@ -41,7 +41,7 @@ def number_of_paths(connections, limited_nodes, limit):
                 for node in limited_nodes:
                     node_count = child.path.count(node)
                     if node_count > 2:
-                        limits_reached += 2
+                        limits_reached = limit + 1
                     if node_count > 1:
                         limits_reached += 1
                 if limits_reached > limit:
