@@ -1,5 +1,5 @@
 import pathlib
-path_to_input = pathlib.Path('day1_input.txt')
+path_to_input = pathlib.Path('input.txt')
 
 with path_to_input.open('r') as file:
     day1_raw_input = file.read()
