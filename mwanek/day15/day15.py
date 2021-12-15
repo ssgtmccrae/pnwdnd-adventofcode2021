@@ -32,7 +32,8 @@ def navigate(risk_map, start, end):
     y_max, x_max = [i - 1 for i in np.shape(risk_map)]
 
     to_visit = []
-    visited = []
+    visited = set()
+    lowest_cost = {}
     to_visit.append(start_node)
 
     iterations = 0
@@ -58,7 +59,7 @@ def navigate(risk_map, start, end):
                 current_index = index
 
         to_visit.pop(current_index)
-        visited.append(current_node)
+        visited.add(current_node.position)
 
         if current_node == end_node:
             return current_node
@@ -79,7 +80,7 @@ def navigate(risk_map, start, end):
             child_nodes.append(new_node)
 
         for child in child_nodes:
-            if [n for n in visited if child.position == n.position]:
+            if child.position in visited:
                 continue
             if [n for n in to_visit if child.position == n.position and child.cost >= n.cost]:
                 continue
@@ -90,15 +91,46 @@ def navigate(risk_map, start, end):
         #print("Queue:", [(node.position, node.cost) for node in to_visit])
         #input()
 
+def bigger_map(starting_map):
+    row = []
+    row.append(starting_map)
+    for i in range(4):
+        new_grid = row[i] + 1
+        with np.nditer(new_grid, op_flags=['readwrite']) as it:
+            for x in it:
+                if x == 10:
+                    x[...] = 1
+        row.append(new_grid)
+    columns = []
+    columns.append(np.concatenate((row), axis=1))
+    for i in range(4):
+        new_grid = columns[i] + 1
+        with np.nditer(new_grid, op_flags=['readwrite']) as it:
+            for x in it:
+                if x == 10:
+                    x[...] = 1
+        columns.append(new_grid)
+    return np.concatenate(columns)
+
 risk_map = []
 for line in data:
     risk_map.append([int(char) for char in line])
-y_max, x_max = [i - 1 for i in np.shape(risk_map)]
 
+risk_map = np.array(risk_map)
+y_max, x_max = [i - 1 for i in np.shape(risk_map)]
 start = (0, 0)
 end = (y_max, x_max)
 
 final_node = navigate(risk_map, start, end)
 
-print(final_node.cost)
+big_map = np.array(bigger_map(risk_map))
+big_y_max, big_x_max = [i - 1 for i in np.shape(big_map)]
+big_start = (0, 0)
+big_end = (big_y_max, big_x_max)
+
+final_big_node = navigate(big_map, big_start, big_end)
+
+print("Part 1, final cost:", final_node.cost)
+print("Part 2, final cost:", final_big_node.cost)
+
 print(time.perf_counter() - start_time)

@@ -1,24 +1,8 @@
-import numpy as np
-from typing import List
 import copy
-
 from termcolor import colored
 
 with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip().split('\n')
-
-test_data = """5483143223
-2745854711
-5264556173
-6141336146
-6357385478
-4167524645
-2176841721
-6882881134
-4846848554
-5283751526
-"""
-#data = test_data.strip().split('\n')
 
 class Octopus():
     def __init__(self, starting_energy: int) -> None:
@@ -54,10 +38,10 @@ class Octopus():
             self._energy = 0
         self._flashing = flashing_state
 
-
     @property
     def neighbors(self):
         return self._neighbors
+
     @neighbors.setter
     def neighbors(self, octopi) -> None:
         self._neighbors = octopi
@@ -92,6 +76,7 @@ class OctopusGrid:
         self.all_octopi = [octopus for row in self.grid for octopus in row]
         self._flashes = 0
         self._all_flashing = False
+        self._snapshot = None
 
     def step(self):
         for octopus in self.all_octopi:
