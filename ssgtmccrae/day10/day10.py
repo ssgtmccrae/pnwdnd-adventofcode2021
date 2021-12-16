@@ -21,48 +21,67 @@ TEST_SET_RAW = '''[({(<(())[]>[[{[]{<()<>>
 test_set = TEST_SET_RAW.split('\n')
 
 SCORE_LEGEND = {
-    '(': 3,
-    '[': 57,
-    '{': 1197,
-    '<': 25137,
+    ')': 3,
+    ']': 57,
+    '}': 1197,
+    '>': 25137,
+    '(': 1,
+    '[': 2,
+    '{': 3,
+    '<': 4,
 }
 
 def bracket_check(file_contents):
     """
     Recursively checks if line brackets are correct, applying scores if not.
     Input: line
-    Output: score (int)
+    Output: corruption_score (int)
     """
-    score = 0
-    for line in file_contents:
-        score += __bracket_check(list(line), score)
-    return score
+    corruption_score = 0
+    completion_scores = []
 
-def __bracket_check(line, score):
-    print(line)
-    x = line.pop(0)
-    if x in ['(','[','{','<']:
-        try:
-            match x:
-                case '(':
-                    y_idx = line.index(')')
-                case '[':
-                    y_idx = line.index(']')
-                case '{':
-                    y_idx = line.index('}')
-                case '<':
-                    y_idx = line.index('>')
-            y = line.pop(y_idx)
-            print(f'match for {x} found, line remaining: {line}' )
-        except:
-            print(f'match to {x} not found')
-            score += SCORE_LEGEND[x]
-    if len(line) > 0:
-        score = __bracket_check(line, score)
-    return score
+    for line in file_contents:
+        orig_line = line
+        changed = None
+        while changed != False:
+            changed = False
+            new_line = line
+            new_line = new_line.replace('()','')
+            new_line = new_line.replace('{}','')
+            new_line = new_line.replace('[]','')
+            new_line = new_line.replace('<>','')
+            if new_line != line:
+               changed = True
+            line = new_line
+        corruptors = [x for x in list(line) if x in [')','}',']','>']]
+        if len(corruptors) > 0:
+            corruption_score += SCORE_LEGEND[corruptors[0]]
+            file_contents.remove(orig_line)
+        else:
+            completion_score = 0
+            line = list(line)
+            line.reverse()
+            for item in line:
+                match item:
+                    case '(':
+                        orig_line + ')'
+                    case '{':
+                        orig_line + '}'
+                    case '[':
+                        orig_line + ']'
+                    case '<':
+                        orig_line + '>'
+                completion_score = completion_score * 5 + SCORE_LEGEND[item]
+            completion_scores.append(completion_score)
+    return corruption_score, sorted(completion_scores)
 
 if __name__ == '__main__':
-    # topomap = TopoMap(test_set) # Test Code
+    # print(bracket_check(test_set)) # Test Code
     dataset = get_data(year=2021, day=10).split('\n')
-    # pprint(dataset)
-    print(bracket_check(test_set))
+    bracket_stats = bracket_check(dataset)
+
+    # Part 1
+    print(f'Pt1 - Corruption Score: {bracket_stats[0]}')
+    # Part 2
+    middle_score = bracket_stats[1][len(bracket_stats[1])//2]
+    print(f'Pt2 - Middle Completion Score: {middle_score}')
