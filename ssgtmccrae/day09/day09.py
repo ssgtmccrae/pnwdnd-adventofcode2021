@@ -5,17 +5,17 @@ https://adventofcode.com/2021/day/9
 """
 
 from collections import namedtuple
+# from pprint import pprint
 from aocd import get_data
-from pprint import pprint
 import numpy as np
 
-test_set_raw = '''2199943210
+TEST_SET_RAW = '''2199943210
 3987894921
 9856789892
 8767896789
 9899965678'''
 test_set = []
-for line in test_set_raw.split('\n'):
+for line in TEST_SET_RAW.split('\n'):
     test_set.append(list(line))
 test_set = np.array(test_set, int)
 
@@ -29,11 +29,16 @@ class TopoMap():
 
     topomap = None
 
-    def __init__(self, topomap):
-        if isinstance(topomap, np.ndarray):
-            self.topomap = topomap
+    def __init__(self, _topomap):
+        if isinstance(_topomap, np.ndarray):
+            self.topomap = _topomap
 
     def north(self, idx):
+        """
+        Retrieves point stats for point north of idx on topomap.
+        Input: valid idx tuple
+        Output: Point namedtuple
+        """
         if idx[0] != 0:
             north_value = self.topomap[(idx[0]-1,idx[1])]
             north_idx = (idx[0]-1,idx[1])
@@ -41,6 +46,11 @@ class TopoMap():
         return None
 
     def south(self, idx):
+        """
+        Retrieves point stats for point south of idx on topomap.
+        Input: valid idx tuple
+        Output: Point namedtuple
+        """
         if idx[0] < self.topomap.shape[0] - 1:
             south_value = self.topomap[(idx[0]+1,idx[1])]
             south_idx = (idx[0]+1,idx[1])
@@ -48,6 +58,11 @@ class TopoMap():
         return None
 
     def east(self, idx):
+        """
+        Retrieves point stats for point east of idx on topomap.
+        Input: valid idx tuple
+        Output: Point namedtuple
+        """
         if idx[1] < self.topomap.shape[1] - 1:
             east_value = self.topomap[(idx[0],idx[1]+1)]
             east_idx = (idx[0],idx[1]+1)
@@ -55,6 +70,11 @@ class TopoMap():
         return None
 
     def west(self, idx):
+        """
+        Retrieves point stats for point west of idx on topomap.
+        Input: valid idx tuple
+        Output: Point namedtuple
+        """
         if idx[1] != 0:
             west_value = self.topomap[(idx[0],idx[1]-1)]
             west_idx = (idx[0],idx[1]-1)
@@ -80,14 +100,21 @@ class TopoMap():
         lowpoints = []
         for idx, value in np.ndenumerate(self.topomap):
             # print(f'idx: {idx}, value: {value}')
-            n,s,e,w = self.north(idx), self.south(idx), self.east(idx), self.west(idx),
+            north,south,east,west = self.north(idx), self.south(idx), self.east(idx), self.west(idx)
             # print(f'n:{n}, s:{s}, e:{e}, w:{w}')
-            if len([x.value for x in [n,s,e,w] if x is not None and x.value <= value ]) == 0:
+            if len([x.value for x in [north,south,east,west] if x is not None and x.value <= value ]) == 0:
                 lowpoints.append(self.Point(idx=idx, value=int(value), risk=int(value+1)))
         return lowpoints
 
     @property
     def basins(self):
+        """
+        Recursively finds members of a basin surrounded by max height points.
+        This is a bloody hack due to the thinking I'd have to find how to teach a compute what a ridgeline is...
+        Somehow I hate this more.
+        Input: None
+        Output: list of Basin objects (defined below)
+        """
         Basin = namedtuple('Basin', ('lowpoint','points'))
         basins = []
         for lowpoint in self.lowpoints:
@@ -98,6 +125,7 @@ class TopoMap():
         return basins
 
     def __find_basin_members(self, point, basin_members):
+        """Recursive operator for self.basins"""
         if point.value != 9:
             basin_members.append(point)
             neighbors = [x for x in [self.north(point.idx), self.south(point.idx), self.east(point.idx), self.west(point.idx)] if x is not None]
@@ -120,9 +148,9 @@ if __name__ == '__main__':
     topomap = TopoMap(dataset)
 
     # Part 1
-    print(topomap.total_risk)
+    print(f'Pt1 - Total Risk: {topomap.total_risk}')
 
     # Part 2
-    basins = topomap.basins
-    basins.sort(key=lambda x: len(x.points), reverse=True)
-    print(np.prod([len(x.points) for x in basins[:3]]))
+    basin_list = topomap.basins
+    basin_list.sort(key=lambda x: len(x.points), reverse=True)
+    print(f'Pt2 - Product of size of 3 largest basins: {np.prod([len(x.points) for x in basin_list[:3]])}')
