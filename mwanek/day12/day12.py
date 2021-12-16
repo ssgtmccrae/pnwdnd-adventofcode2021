@@ -36,7 +36,6 @@ def number_of_paths(connections, limited_nodes, limit):
             if child.name == start:
                 continue
             if child.name in limited_nodes:
-                # Original attempt, ~2.5 seconds
                 limits_reached = 0
                 for node in limited_nodes:
                     node_count = child.path.count(node)
@@ -48,32 +47,6 @@ def number_of_paths(connections, limited_nodes, limit):
                         break
                 if limits_reached > limit:
                     continue
-                """
-                # Second attempt, ~3 seconds
-                is_limited = lambda node: node in limited_nodes
-                limited_visits = list(filter(is_limited, child.path))
-                limited_visit_counts = list(Counter(limited_visits).values())
-                visited_twice = lambda count: count > 1
-                visited_more_than_twice = lambda count: count > 2
-                rule_1_violated = len(list(filter(visited_twice, limited_visit_counts))) > limit
-                rule_2_violated = list(filter(visited_more_than_twice, limited_visit_counts))
-                if rule_1_violated:
-                    continue
-                if rule_2_violated:
-                    continue
-                """
-                """
-                # Third attempt, ~20 seconds
-                my_path = np.array(child.path)
-                mask = np.isin(my_path, list(limited_nodes))
-                _, visits = np.unique(my_path[mask], return_counts=True)
-                twice = visits[visits>1]
-                thrice = visits[visits>2].size
-                if thrice:
-                    continue
-                if twice.size > limit:
-                    continue
-                """
             to_visit.append(child)
 
     return(found_paths)
