@@ -1,11 +1,10 @@
 """
 Ryan McGregor, 15Dec2021
-AOC2021:Day09
-https://adventofcode.com/2021/day/9
+AOC2021:Day10
+https://adventofcode.com/2021/day/10
 """
 
-from collections import namedtuple
-from pprint import pprint
+# from pprint import pprint
 from aocd import get_data
 
 TEST_SET_RAW = '''[({(<(())[]>[[{[]{<()<>>
@@ -35,15 +34,16 @@ def bracket_check(file_contents):
     """
     Recursively checks if line brackets are correct, applying scores if not.
     Input: line
-    Output: corruption_score (int)
+    Output: corruption_score (int), completion_scores (List[int]), corrected_lines (List[str])
     """
     corruption_score = 0
     completion_scores = []
+    corrected_lines = []
 
     for line in file_contents:
-        orig_line = line
+        corrected_line = line
         changed = None
-        while changed != False:
+        while changed is not False:
             changed = False
             new_line = line
             new_line = new_line.replace('()','')
@@ -51,12 +51,12 @@ def bracket_check(file_contents):
             new_line = new_line.replace('[]','')
             new_line = new_line.replace('<>','')
             if new_line != line:
-               changed = True
+                changed = True
             line = new_line
         corruptors = [x for x in list(line) if x in [')','}',']','>']]
         if len(corruptors) > 0:
             corruption_score += SCORE_LEGEND[corruptors[0]]
-            file_contents.remove(orig_line)
+            file_contents.remove(corrected_line)
         else:
             completion_score = 0
             line = list(line)
@@ -64,16 +64,17 @@ def bracket_check(file_contents):
             for item in line:
                 match item:
                     case '(':
-                        orig_line + ')'
+                        corrected_line += ')'
                     case '{':
-                        orig_line + '}'
+                        corrected_line += '}'
                     case '[':
-                        orig_line + ']'
+                        corrected_line += ']'
                     case '<':
-                        orig_line + '>'
+                        corrected_line += '>'
                 completion_score = completion_score * 5 + SCORE_LEGEND[item]
             completion_scores.append(completion_score)
-    return corruption_score, sorted(completion_scores)
+            corrected_lines.append(corrected_line)
+    return corruption_score, sorted(completion_scores), corrected_line
 
 if __name__ == '__main__':
     # print(bracket_check(test_set)) # Test Code
