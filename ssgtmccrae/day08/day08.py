@@ -6,6 +6,7 @@ Been really busy, tornadoes and stuff...
 """
 from typing import List, OrderedDict
 from aocd import get_data
+from pprint import pprint
 
 test_set =  [{'debug_code': ['acedgfb', 'cdfbe', 'gcdfa', 'fbcad', 'dab', 'cefabd', 'cdfgeb', 'eafb', 'cagedb', 'ab'],
                'output': ['cdfeb', 'fcadb', 'cdfeb', 'cdbaf']}]
@@ -101,7 +102,7 @@ if __name__ == '__main__':
 
     # decrypted_displays = decrypt_displays(test_set) # Test code
     decrypted_displays = decrypt_displays(dataset)
-    # pprint(decrypted_displays) # Test code
+    pprint(decrypted_displays) # Test code
 
     # Pt1
     PT1_TOTAL = 0
