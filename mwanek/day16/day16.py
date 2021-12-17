@@ -5,20 +5,20 @@ with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip()
 
 class Transmission:
-    def __init__(self, raw_input) -> None: #Convert hex into binary string
+    def __init__(self, raw_input) -> None:
         self.raw_input = raw_input
         self.parsed = False
         self.bytes = deque()
         self.buffer = ""
 
-    def parse_hex(self) -> None:
+    def parse_hex(self) -> None:    #Convert hex into binary string in self.bytes
         if not self.parsed:
             for char in self.raw_input:
                 self.bytes.append(format(int(char, 16), '0>4b'))
             self.parsed = True
             return self
 
-    def parse_bin(self) -> None:
+    def parse_bin(self) -> None:    #Slice binary string into self.bytes
         if not self.parsed:
             bit_length = len(self.raw_input)
             remainder = bit_length % 4
@@ -74,13 +74,13 @@ def parse_packets(tx: Transmission):
                     while sub_tx.bytes:
                         sub_packet, sub_pver = parse_packets(sub_tx)
                         pver_sum += sub_pver
-                        packet.append(sub_packet.pop())
+                        packet += sub_packet
                 case 1:
                     num_packets = tx.get_int(11)
                     for _ in range(num_packets):
                         next_packet, next_pver = parse_packets(tx)
                         pver_sum += next_pver
-                        packet.append(next_packet.pop())
+                        packet += next_packet
             match OTYPES[ptype]:
                 case "sum":
                     packet = sum(packet)

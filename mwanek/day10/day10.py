@@ -9,12 +9,12 @@ with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip().split('\n')
 
 Pair = namedtuple("Pair", "opener, closer")
-PAIRS = [
+PAIRS = (
         Pair("(", ")"),
         Pair("[", "]"),
         Pair("{", "}"),
         Pair("<", ">")
-        ]
+        )
 OPENERS = [pair.opener for pair in PAIRS]
 CLOSERS = [pair.closer for pair in PAIRS]
 OPENER_FOR = dict(zip(CLOSERS, OPENERS))
