@@ -5,31 +5,39 @@ with open("input.txt", "r", encoding="utf-8") as file:
     data = file.read().strip()
 
 class Transmission:
-    def __init__(self, hex_input) -> None:
+    def __init__(self, raw_input) -> None: #Convert hex into binary string
+        self.raw_input = raw_input
+        self.parsed = False
         self.bytes = deque()
-        for char in hex_input:
-            self.bytes.append(format(int(char, 16), '0>4b'))
         self.buffer = ""
-    def get(self, amt) -> str:
+
+    def parse_hex(self) -> None:
+        if not self.parsed:
+            for char in self.raw_input:
+                self.bytes.append(format(int(char, 16), '0>4b'))
+            self.parsed = True
+            return self
+
+    def parse_bin(self) -> None:
+        if not self.parsed:
+            bit_length = len(self.raw_input)
+            remainder = bit_length % 4
+            if remainder:     # If length isn't divisble by four
+                bit_length = bit_length - remainder + 4   # Extend length to next divisor
+            bin_input = format(self.raw_input, f'0<{bit_length}') # Add trailing zeros
+            for i in range(0,bit_length, 4):
+                self.bytes.append(bin_input[i:i+4]) # Add bytes in slices of 4
+            self.parsed = True
+            return self
+
+    def get(self, amt) -> str: #Fill buffer until large enough for requested bits
         while len(self.buffer) < amt:
             self.buffer += self.bytes.popleft()
         bits, self.buffer = self.buffer[:amt], self.buffer[amt:]
         return bits
-    def clear_buffer(self) -> None:
-        self.buffer = ""
 
-class SubTransmission(Transmission):
-    def __init__(self, bin_input) -> None:
-        bit_length = len(bin_input)
-        rem = bit_length % 4
-        if rem:
-            bit_length = bit_length - rem + 4
-        bin_input = format(bin_input, f'0<{bit_length}')
-
-        self.bytes = deque()
-        for i in range(0,bit_length, 4):
-            self.bytes.append(bin_input[i:i+4])
-        self.buffer = ""
+    def get_int(self, amt) -> str: # Do a get, but convert to integer
+        return int(self.get(amt), 2)
 
 PTYPES = defaultdict(lambda:"operator")
 PTYPES[4] = "literal"
@@ -42,41 +50,37 @@ OTYPES = {  0: "sum",
             7: "equal"
 }
 
-def parse_packets(x: Transmission):
+def parse_packets(tx: Transmission):
     pver_sum = 0
     packets = []
-    int_bits = lambda i: int(x.get(i), 2)
-    pver, ptype = int_bits(3), int_bits(3)
+    pver, ptype = tx.get_int(3), tx.get_int(3)
     pver_sum += pver
-
     match PTYPES[ptype]:
         case "literal":
             num = ""
-            read_more = int_bits(1)
-            num += x.get(4)
+            read_more = tx.get_int(1)
+            num += tx.get(4)
             while read_more:
-                read_more = int_bits(1)
-                num += x.get(4)
+                read_more = tx.get_int(1)
+                num += tx.get(4)
             packets.append(int(num, 2))
         case "operator":
-            ltype = int_bits(1)
+            ltype = tx.get_int(1)
             packet = []
             match ltype:
                 case 0:
-                    bit_length = int_bits(15)
-                    sub = SubTransmission(x.get(bit_length))
-                    while sub.bytes:
-                        sub_packet, sub_pver = parse_packets(sub)
-                        sub_packet = sub_packet.pop()
+                    bit_length = tx.get_int(15)
+                    sub_tx = Transmission(tx.get(bit_length)).parse_bin()
+                    while sub_tx.bytes:
+                        sub_packet, sub_pver = parse_packets(sub_tx)
                         pver_sum += sub_pver
-                        packet.append(sub_packet)
+                        packet.append(sub_packet.pop())
                 case 1:
-                    num_packets = int_bits(11)
+                    num_packets = tx.get_int(11)
                     for _ in range(num_packets):
-                        sub_packet, sub_pver = parse_packets(x)
-                        sub_packet = sub_packet.pop()
-                        pver_sum += sub_pver
-                        packet.append(sub_packet)
+                        next_packet, next_pver = parse_packets(tx)
+                        pver_sum += next_pver
+                        packet.append(next_packet.pop())
             match OTYPES[ptype]:
                 case "sum":
                     packet = sum(packet)
@@ -87,15 +91,15 @@ def parse_packets(x: Transmission):
                 case "maximum":
                     packet = max(packet)
                 case "greater":
-                    packet = 1 if packet[0] > packet [1] else 0
+                    packet = 1 if packet[0] > packet[1] else 0
                 case "less":
-                    packet = 1 if packet[0] < packet [1] else 0
+                    packet = 1 if packet[0] < packet[1] else 0
                 case "equal":
-                    packet = 1 if packet[0] == packet [1] else 0
+                    packet = 1 if packet[0] == packet[1] else 0
             packets.append(packet)
     return packets, pver_sum
 
-p2_answer, p1_answer = parse_packets(Transmission(data))
+p2_answer, p1_answer = parse_packets(Transmission(data).parse_hex())
 p2_answer = p2_answer[0]
 
 print("Part 1, sum of packet versions:", p1_answer)
