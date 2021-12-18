@@ -21,8 +21,6 @@ TEST_SET_RAW = """5483143223
 4846848554
 5283751526
 """
-test_set = np.array([list(x) for x in TEST_SET_RAW.split('\n') if x != ''], int)
-# 100 Steps, 1656 Flashes
 
 class OctopusGraph():
     """
@@ -31,7 +29,8 @@ class OctopusGraph():
     """
 
     state = None
-    cycles_ticked: 0
+    cycles_ticked = 0
+    flashes = 0
 
     def __init__(self, starting_state: np.ndarray):
         if isinstance(starting_state, np.ndarray):
@@ -43,14 +42,14 @@ class OctopusGraph():
         Input: number_of_cycles (int, default: 1)
         Output: None
         """
-        pprint(self.state)
         for x in range(int(number_of_cycles)):
+            self.cycles_ticked += 1
             self.state = np.add(self.state, np.ones(shape=self.state.shape, dtype=int))
             flash_mask = np.ones(self.state.shape)
             for idx, value in np.ndenumerate(self.state):
-                if flash_mask[idx] * self.state[idx] > 9:
-                    self.__flashPoint(idx, flash_mask)
-            pprint(self.state)
+                if self.state[idx] * flash_mask[idx] > 9:
+                    self.flashPoint(idx, flash_mask)
+            self.state = np.multiply(self.state, flash_mask)
 
     def getSurroundings(self, point_idx):
         """
@@ -80,20 +79,33 @@ class OctopusGraph():
                     )
         return surroundings
 
-    # def __flashPoint(self, point):
+    def flashPoint(self, point_idx, flash_mask):
+        """
+        Flashes point and surrounding points.
+        Input: point (tuple(int))
+        Output: None
+        """
+        flash_mask[point_idx] = 0
+        self.flashes += 1
+        surroundings = self.getSurroundings(point_idx)
+        for neighbor_idx in surroundings.values():
+            self.state[neighbor_idx] += 1
+            if self.state[neighbor_idx] * flash_mask[neighbor_idx] > 9:
+                self.flashPoint(neighbor_idx, flash_mask)
+
+
+
 
 
 
 
 
 if __name__ == '__main__':
-    dataset = get_data(year=2021, day=11).split('\n')
-    octopus_field = OctopusGraph(np.array(test_set, int))
-    pprint(octopus_field.state)
-    surroundings_1 = octopus_field.getSurroundings((1,1))
-    for direction in surroundings_1:
-        print(f'point: {direction}, value: {octopus_field.state[surroundings_1[direction]]}')
-    pprint(octopus_field.state)
-    surroundings_2 = octopus_field.getSurroundings((0,0))
-    for direction in surroundings_2:
-        print(f'point: {direction}, value: {octopus_field.state[surroundings_2[direction]]}')
+    # test_set = np.array([list(x) for x in TEST_SET_RAW.split('\n') if x != ''], int)
+    # octopus_field = OctopusGraph(np.array(test_set, int)) # test code, expected 1656 flashes at 100 cycles
+
+    dataset = np.array([list(x) for x in get_data(year=2021, day=11).split('\n') if x != ''], int)
+    octopus_field = OctopusGraph(dataset)
+    # Pt 1
+    octopus_field.tickState(100)
+    print(octopus_field.flashes)
