@@ -105,7 +105,14 @@ if __name__ == '__main__':
     # octopus_field = OctopusGraph(np.array(test_set, int)) # test code, expected 1656 flashes at 100 cycles
 
     dataset = np.array([list(x) for x in get_data(year=2021, day=11).split('\n') if x != ''], int)
-    octopus_field = OctopusGraph(dataset)
+
     # Pt 1
-    octopus_field.tickState(100)
-    print(octopus_field.flashes)
+    octopus_field_1 = OctopusGraph(dataset)
+    octopus_field_1.tickState(100)
+    print(octopus_field_1.flashes)
+
+    # Pt 2
+    octopus_field_2 = OctopusGraph(dataset)
+    while np.sum(np.sum(octopus_field_2.state)) != 0:
+        octopus_field_2.tickState()
+    print(f'Final Iteration: {octopus_field_2.cycles_ticked}; Sum: {np.sum(np.sum(octopus_field_2.state))}')
