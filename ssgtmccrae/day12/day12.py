@@ -8,6 +8,7 @@ https://adventofcode.com/2021/day/11
 from pprint import pprint
 from aocd import get_data
 import numpy as np
+import sys
 
 TEST_SET_1_RAW = """start-A
 start-b
@@ -17,7 +18,18 @@ b-d
 A-end
 b-end"""
 
-TEST_SET_2_RAW = """fs-end
+TEST_SET_2_RAW = """dc-end
+HN-start
+start-kj
+dc-start
+dc-HN
+LN-dc
+HN-end
+kj-sa
+kj-HN
+kj-dc"""
+
+TEST_SET_3_RAW = """fs-end
 he-DX
 fs-he
 start-DX
@@ -45,7 +57,7 @@ class CaveSystem():
     cavemap = {'start': [] ,'end': []}
     __paths = []
 
-    def __init__(self, cave_connections):
+    def __init__(self, cave_connections, small_cave_limit=1):
         for connection in cave_connections:
             conn_pair = connection.split('-')
             for idx, node in enumerate(conn_pair):
@@ -54,43 +66,51 @@ class CaveSystem():
                 else:
                     self.cavemap[node].append(conn_pair[abs(idx - 1)])
 
-    @property
-    def paths(self):
+    def find_paths(self, small_cave_limit=1):
         """
         Recursive function for finding all potential paths through a cave system.
-        Input: None
+        Input: small_cave_limit (int, default 1)
         Output: List of Paths (List of Nodes(str))
         """
-        if len(self.__paths) == 0:
-            nodes_visited = []
-            self.__find_path('start', nodes_visited)
-        return(self.__paths)
+        nodes_visited = []
+        paths = []
+        self.__find_path(node='start',
+                         nodes_visited=nodes_visited,
+                         paths=paths,
+                         small_cave_limit=small_cave_limit)
+        return(paths)
 
-    def __find_path(self, node, nodes_visited):
+    def __find_path(self, node, nodes_visited, paths, small_cave_limit):
         nodes_visited.append(node)
-        print(f'nodes_visited: {nodes_visited}')
-        print(f'node: {node}')
-        for connection in self.cavemap[node]:
-            if connection == 'end':
-                nodes_visited.append(connection)
-                self.__paths.append(nodes_visited.copy())
-            if connection not in nodes_visited or connection.isupper():
-                self.__find_path(connection, nodes_visited.copy())
-
-
-
-
-
+        # print(f'small_cave_limit: {small_cave_limit}')
+        # print(f'nodes_visited_count_conn: {nodes_visited.count(node)}')
+        # print(f'nodes_visited: {nodes_visited}')
+        # print(f'node: {node}')
+        if node == 'end':
+            paths.append(nodes_visited.copy())
+        else:
+            for connection in self.cavemap[node]:
+                if connection != 'start':
+                    retraces = nodes_visited.copy()
+                    for unique in set(nodes_visited):
+                        retraces.remove(unique)
+                    if (connection.isupper() or
+                        connection not in nodes_visited or
+                        len([x for x in retraces if x.islower()]) < (small_cave_limit - 1)):
+                        self.__find_path(node=connection,
+                                    nodes_visited=nodes_visited.copy(),
+                                    paths=paths,
+                                    small_cave_limit=small_cave_limit)
 
 if __name__ == '__main__':
 
-    # ## Test Set 1: 10 Potential Paths
+    # ## Test Set 1 (pt1):
+    # ## 10 Potential Paths (pt1), 36 Potential Paths (pt2)
     # test_system = CaveSystem(TEST_SET_1_RAW.split('\n'))
-    # pprint(test_system.paths)
-
-    # ## Test Set 2: 226 Potential Paths
-    # test_system = CaveSystem(TEST_SET_2_RAW.split('\n'))
-    # print(len(test_system.paths))
+    # print('Test_System_1:')
+    # print(f'Pt1: {len(test_system.find_paths())}')
+    # print(f'Pt2: {len(test_system.find_paths(2))}')
+    # pprint(test_system.find_paths(2))
 
     cave_system = CaveSystem(get_data(year=2021, day=12).split('\n'))
-    print(len(cave_system.paths))
+    print(len(cave_system.find_paths(2)))
