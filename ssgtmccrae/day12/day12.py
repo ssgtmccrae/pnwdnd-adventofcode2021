@@ -5,10 +5,7 @@ AOC2021:Day11
 https://adventofcode.com/2021/day/11
 """
 
-from pprint import pprint
 from aocd import get_data
-import numpy as np
-import sys
 
 TEST_SET_1_RAW = """start-A
 start-b
@@ -18,36 +15,6 @@ b-d
 A-end
 b-end"""
 
-TEST_SET_2_RAW = """dc-end
-HN-start
-start-kj
-dc-start
-dc-HN
-LN-dc
-HN-end
-kj-sa
-kj-HN
-kj-dc"""
-
-TEST_SET_3_RAW = """fs-end
-he-DX
-fs-he
-start-DX
-pj-DX
-end-zg
-zg-sl
-zg-pj
-pj-he
-RW-he
-fs-DX
-pj-RW
-zg-RW
-start-pj
-he-WI
-zg-he
-pj-fs
-start-RW"""
-
 class CaveSystem():
     """
     Class to manage a cave system map and determine number of paths.
@@ -55,9 +22,8 @@ class CaveSystem():
     Output: None
     """
     cavemap = {'start': [] ,'end': []}
-    __paths = []
 
-    def __init__(self, cave_connections, small_cave_limit=1):
+    def __init__(self, cave_connections):
         for connection in cave_connections:
             conn_pair = connection.split('-')
             for idx, node in enumerate(conn_pair):
@@ -78,14 +44,10 @@ class CaveSystem():
                          nodes_visited=nodes_visited,
                          paths=paths,
                          small_cave_limit=small_cave_limit)
-        return(paths)
+        return paths
 
     def __find_path(self, node, nodes_visited, paths, small_cave_limit):
         nodes_visited.append(node)
-        # print(f'small_cave_limit: {small_cave_limit}')
-        # print(f'nodes_visited_count_conn: {nodes_visited.count(node)}')
-        # print(f'nodes_visited: {nodes_visited}')
-        # print(f'node: {node}')
         if node == 'end':
             paths.append(nodes_visited.copy())
         else:
