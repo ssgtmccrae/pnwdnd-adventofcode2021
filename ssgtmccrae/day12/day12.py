@@ -1,4 +1,3 @@
-
 """
 Ryan McGregor, 18Dec2021
 AOC2021:Day11
