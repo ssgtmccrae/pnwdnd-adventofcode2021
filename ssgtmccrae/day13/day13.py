@@ -1,7 +1,7 @@
 """
-Ryan McGregor, 18Dec2021
-AOC2021:Day11
-https://adventofcode.com/2021/day/11
+Ryan McGregor, 20Dec2021
+AOC2021:Day13
+https://adventofcode.com/2021/day/13
 """
 
 from pprint import pprint
