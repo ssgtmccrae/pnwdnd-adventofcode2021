@@ -1,7 +1,7 @@
 """
-Ryan McGregor, 18Dec2021
-AOC2021:Day11
-https://adventofcode.com/2021/day/11
+Ryan McGregor, 19Dec2021
+AOC2021:Day12
+https://adventofcode.com/2021/day/12
 """
 
 from aocd import get_data
