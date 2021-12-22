@@ -4,6 +4,7 @@ AOC2021:Day14
 https://adventofcode.com/2021/day/14
 """
 
+import cProfile
 from pprint import pprint
 from aocd import get_data
 
@@ -50,16 +51,29 @@ class PolymerChain():
         for iter in range(num_iterations):
             print(f'Iteration: {iter}')
             new_chain = ''
-            for idx, pair in enumerate(self.polymer_chain):
-                string = self.polymer_chain[idx:idx+2]
-                if len(string) == 2:
-                    if string in self.polymer_legend.keys():
-                        new_chain += f'{list(string)[0]}{self.polymer_legend[string]}'
-                    else:
-                        new_chain += {list(string)[0]}
-                else:
-                    new_chain += list(string)[0]
+            chain_length = int(len(self.polymer_chain))
+            current_idx = 0
+            while current_idx < chain_length:
+                string = self.polymer_chain[current_idx:current_idx+2]
+                if string in self.polymer_legend:
+                    try:
+                        new_chain += string[0] + self.polymer_legend[string]
+                    except:
+                        new_chain += string[0]
+                current_idx += 1
             self.polymer_chain = new_chain
+
+
+            # for idx, pair in enumerate(self.polymer_chain):
+            #     string = self.polymer_chain[idx:idx+2]
+            #     if len(string) == 2:
+            #         if string in self.polymer_legend.keys():
+            #             new_chain += f'{list(string)[0]}{self.polymer_legend[string]}'
+            #         else:
+            #             new_chain += {list(string)[0]}
+            #     else:
+            #         new_chain += list(string)[0]
+            # self.polymer_chain = new_chain
         return self.polymer_chain
 
 if __name__ == '__main__':
@@ -72,27 +86,28 @@ if __name__ == '__main__':
 
     # Pt1
     polymer_chain_1 = PolymerChain(starting_chain, legend_list)
-    polymer_string = polymer_chain_1.iterate_polymer(10)
-    element_dict = {}
-    for element in polymer_string:
-        if element not in element_dict:
-            element_dict[element] = 0
-        element_dict[element] += 1
-    print('Part 1 Totals')
-    pprint(element_dict)
+    # polymer_string = polymer_chain_1.iterate_polymer(10)
+    cProfile.run('polymer_chain_1.iterate_polymer(25)')
+    # element_dict = {}
+    # for element in polymer_string:
+    #     if element not in element_dict:
+    #         element_dict[element] = 0
+    #     element_dict[element] += 1
+    # print('Part 1 Totals')
+    # pprint(element_dict)
 
-    # Pt2
-    polymer_chain_2 = PolymerChain(starting_chain, legend_list)
-    polymer_string = polymer_chain_2.iterate_polymer(40)
-    element_dict = {}
-    for element in polymer_string:
-        if element not in element_dict:
-            element_dict[element] = 0
-        element_dict[element] += 1
-    print('Part 2 Totals')
-    pprint(element_dict)
-    print(f'Min: {min(element_dict.values)}')
-    print(f'Max: {max(element_dict.values)}')
+    # # Pt2
+    # polymer_chain_2 = PolymerChain(starting_chain, legend_list)
+    # polymer_string = polymer_chain_2.iterate_polymer(40)
+    # element_dict = {}
+    # for element in polymer_string:
+    #     if element not in element_dict:
+    #         element_dict[element] = 0
+    #     element_dict[element] += 1
+    # print('Part 2 Totals')
+    # pprint(element_dict)
+    # print(f'Min: {min(element_dict.values)}')
+    # print(f'Max: {max(element_dict.values)}')
 
     # pprint([x for x in get_data(year=2021, day=14).split('\n') if x != '' and '->' in x])
     # starting_string = ([x for x in get_data(year=2021, day=14).split('\n') if x != '' and '->' not in x][0])
