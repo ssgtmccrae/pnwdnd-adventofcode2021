@@ -51,17 +51,15 @@ class PolymerChain():
         for iter in range(num_iterations):
             print(f'Iteration: {iter}')
             new_chain = ''
-            chain_length = int(len(self.polymer_chain))
-            current_idx = 0
-            while current_idx < chain_length:
-                string = self.polymer_chain[current_idx:current_idx+2]
-                if string in self.polymer_legend:
-                    try:
-                        new_chain += string[0] + self.polymer_legend[string]
-                    except:
-                        new_chain += string[0]
-                current_idx += 1
+            # chain_length = int(len(self.polymer_chain))
+            # current_idx = 0
+            # while current_idx < chain_length:
+            for idx, val in enumerate(range(int(len(self.polymer_chain)))):
+                # new_chain += self.__find_polymer(current_idx)
+                new_chain += self.__find_polymer(idx)
+                # current_idx += 1
             self.polymer_chain = new_chain
+        return self.polymer_chain
 
 
             # for idx, pair in enumerate(self.polymer_chain):
@@ -74,20 +72,31 @@ class PolymerChain():
             #     else:
             #         new_chain += list(string)[0]
             # self.polymer_chain = new_chain
-        return self.polymer_chain
+
+    def __find_polymer(self, pos):
+        str_1 = self.polymer_chain[pos:pos+2]
+        if str_1 in self.polymer_legend:
+            return str_1[0] + self.polymer_legend[str_1]
+        return str_1[0]
+
 
 if __name__ == '__main__':
     ## Testset
-    # starting_chain = [x for x in TEST_SET_RAW.split('\n') if x != '' and '->' not in x][0]
-    # legend_list = [x for x in TEST_SET_RAW.split('\n') if x != '' and '->' in x]
+    starting_chain = [x for x in TEST_SET_RAW.split('\n') if x != '' and '->' not in x][0]
+    legend_list = [x for x in TEST_SET_RAW.split('\n') if x != '' and '->' in x]
     ## Dataset
-    legend_list = [x for x in get_data(year=2021, day=14).split('\n') if x != '' and '->' in x]
-    starting_chain = [x for x in get_data(year=2021, day=14).split('\n') if x != '' and '->' not in x][0]
+    # legend_list = [x for x in get_data(year=2021, day=14).split('\n') if x != '' and '->' in x]
+    # starting_chain = [x for x in get_data(year=2021, day=14).split('\n') if x != '' and '->' not in x][0]
 
     # Pt1
     polymer_chain_1 = PolymerChain(starting_chain, legend_list)
+
+    ## Profiling code
+    cProfile.run('polymer_chain_1.iterate_polymer(20)')
+    # W/O Multiproc, While loop, 3.110 seconds to 20, 106.593 seconds to 25
+    # W/O Multiproc, For loop, 2.891 seconds to 20, 99.425 seconds to 25
+
     # polymer_string = polymer_chain_1.iterate_polymer(10)
-    cProfile.run('polymer_chain_1.iterate_polymer(25)')
     # element_dict = {}
     # for element in polymer_string:
     #     if element not in element_dict:
