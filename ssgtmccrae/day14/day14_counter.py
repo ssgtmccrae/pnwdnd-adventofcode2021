@@ -4,14 +4,8 @@ AOC2021:Day14
 https://adventofcode.com/2021/day/14
 """
 
-import cProfile
 from pprint import pprint
 from aocd import get_data
-import numpy as np
-import multiprocessing as mp
-import time
-
-NUM_CORES = 20
 
 TEST_SET_RAW = """NNCB
 
@@ -59,7 +53,7 @@ class PolymerChain():
         Input: num_iterations (int)
         Output: self.polymer_chain
         """
-        for iter in range(num_iterations):
+        for _ in range(num_iterations):
             new_chain = {}
             for pair in self.polymer_chain:
                 if self.polymer_legend[pair] not in self.polymer_totals:
@@ -83,13 +77,13 @@ if __name__ == '__main__':
     # Data Set
     RAW = get_data(year=2021, day=14)
 
-    polymer_chain = [x for x in RAW.split('\n') if x != '' and '->' not in x][0]
-    polymer_legend = {}
-    for pair in [x.split(' -> ') for x in RAW.split('\n') if x != '' and '->' in x]:
-        polymer_legend[pair[0]] = pair[1]
+    chain = [x for x in RAW.split('\n') if x != '' and '->' not in x][0]
+    legend = {}
+    for legend_pair in [x.split(' -> ') for x in RAW.split('\n') if x != '' and '->' in x]:
+        legend[legend_pair[0]] = legend_pair[1]
 
     ## Pt1
-    polymer = PolymerChain(polymer_chain, polymer_legend)
+    polymer = PolymerChain(chain, legend)
     print(polymer.iterate_polymer(10))
     print('Part 1 Totals')
     pprint(f'{polymer.polymer_totals}')
