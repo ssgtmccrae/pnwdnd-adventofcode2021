@@ -9,6 +9,7 @@ from pprint import pprint
 from aocd import get_data
 import numpy as np
 import multiprocessing as mp
+import time
 
 NUM_CORES = 20
 
@@ -32,14 +33,6 @@ CC -> N
 CN -> C
 """
 
-def __find_polymer(pos, current_chain, polymer_legend):
-    str_1 = current_chain[pos:pos+2]
-    if str_1 in polymer_legend:
-        chunk = str_1[0] + polymer_legend[str_1]
-    else:
-        chunk = str_1[0]
-    return chunk
-
 def iterate_polymer(current_chain, polymer_legend, num_iterations=1):
     """
     Iterates polymer chain based on legend num_iterations number of times.
@@ -48,12 +41,34 @@ def iterate_polymer(current_chain, polymer_legend, num_iterations=1):
     """
     ## String Concat
     for iter in range(num_iterations):
-        new_chain = ''
+        start = time.time()
         print(f'Iteration: {iter}')
+        new_chain = ''
         for idx in range(len(current_chain)):
-            new_chain += __find_polymer(idx, current_chain, polymer_legend)
+            str_1 = current_chain[idx:idx+2]
+            if str_1 in polymer_legend:
+                new_chain += str_1[0] + polymer_legend[str_1]
+            else:
+                new_chain += str_1[0]
         current_chain = new_chain
-    return polymer_chain
+        end = time.time()
+        print(f'Execution Time; {end-start}')
+    return current_chain
+
+    # ## List Append Multiproc
+    # pool = mp.Pool(processes=NUM_CORES)
+    # for iter in range(num_iterations):
+    #     new_chain = ''
+    #     print(f'Iteration: {iter}')
+    #     # new_chain = []
+    #     for idx in range(len(current_chain)):
+    #         # new_chain.append(__find_polymer(idx, current_chain, polymer_legend))
+    #         new_chain = [pool.apply(
+    #             __find_polymer,
+    #             args=(idx, current_chain, polymer_legend))
+    #             for idx in range(len(current_chain))]
+    #     current_chain = ''.join(new_chain)
+    # return polymer_chain
 
     # ## Array Sequencing/Joining (No MiltiProc)
     # for iter in range(num_iterations):
@@ -98,7 +113,7 @@ if __name__ == '__main__':
     ## Profiling code
     # USING TESTSET!
     # cProfile.run('iterate_polymer(polymer_chain, polymer_legend, num_iterations=20)')
-    # cProfile.run('polymer_chain_1.iterate_polymer(25)')
+    # cProfile.run('iterate_polymer(polymer_chain, polymer_legend, num_iterations=25)')
     # W/O Multiproc, While loop using string concat, 3.110 seconds to 20, 106.593 seconds to 25
     # W/O Multiproc, For loop using string concat, 2.891 seconds to 20, 99.425 seconds to 25
     # W/O Multiproc, For loop using list append, 3.769 seconds to 20, 119.368 seconds to 25
@@ -107,25 +122,24 @@ if __name__ == '__main__':
     # Personal note: I really wish that Multiproc was worth it. the code works, produces reliable x10 result
     #                but this problem is just WAY fast as a string concat problem. ¯\_(ツ)_/¯
 
-    # ## Pt1
-    # polymer_string = iterate_polymer(polymer_chain, polymer_legend, num_iterations=10)
-    # element_dict = {}
-    # for element in polymer_string:
-    #     if element not in element_dict:
-    #         element_dict[element] = 0
-    #     element_dict[element] += 1
-    # print('Part 1 Totals')
-    # pprint(element_dict)
+    ## Pt1
+    polymer_string = iterate_polymer(polymer_chain, polymer_legend, num_iterations=10)
+    element_dict = {}
+    for element in polymer_string:
+        if element not in element_dict:
+            element_dict[element] = 0
+        element_dict[element] += 1
+    print('Part 1 Totals')
+    pprint(element_dict)
 
-    # # Pt2
-    # polymer_chain_2 = PolymerChain(starting_chain, legend_list)
-    # polymer_string = polymer_chain_2.iterate_polymer(40)
-    # element_dict = {}
-    # for element in polymer_string:
-    #     if element not in element_dict:
-    #         element_dict[element] = 0
-    #     element_dict[element] += 1
-    # print('Part 2 Totals')
-    # pprint(element_dict)
-    # print(f'Min: {min(element_dict.values)}')
-    # print(f'Max: {max(element_dict.values)}')
+    # Pt2
+    polymer_string = iterate_polymer(polymer_chain, polymer_legend, num_iterations=11)
+    element_dict = {}
+    for element in polymer_string:
+        if element not in element_dict:
+            element_dict[element] = 0
+        element_dict[element] += 1
+    print('Part 2 Totals')
+    pprint(element_dict)
+    print(f'Min: {min(element_dict.values())}')
+    print(f'Max: {max(element_dict.values())}')
