@@ -9,6 +9,7 @@ numpy = "*"
 pylint = "*"
 matplotlib = "*"
 aocd = "*"
+cython = "*"
 
 [dev-packages]
 
