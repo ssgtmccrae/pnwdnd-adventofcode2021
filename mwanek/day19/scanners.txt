@@ -1,0 +1,70 @@
+Iteration #1
+2 > at Coord(x=71, y=-13, z=1212)
+Iteration #2
+14 > at Coord(x=36, y=-1088, z=1126)
+Iteration #3
+13 > at Coord(x=0, y=-2382, z=1111)
+Iteration #4
+4 > at Coord(x=1232, y=-2394, z=1256)
+Iteration #5
+8 > at Coord(x=1210, y=-3430, z=1146)
+Iteration #6
+18 > at Coord(x=1217, y=-3540, z=-69)
+Iteration #7
+19 > at Coord(x=-103, y=-3591, z=38)
+Iteration #8
+3 > at Coord(x=-25, y=-3564, z=-1159)
+Iteration #9
+3 > at Coord(x=-1257, y=-3581, z=-1281)
+Iteration #10
+13 > at Coord(x=-1188, y=-2336, z=-1318)
+Iteration #11
+13 > at Coord(x=-1278, y=-3527, z=-66)
+Iteration #12
+11 > at Coord(x=-1260, y=-4769, z=-75)
+Iteration #13
+8 > at Coord(x=81, y=-4790, z=-86)
+Iteration #14
+19 > at Coord(x=-79, y=-3522, z=-2431)
+Iteration #15
+17 > at Coord(x=-83, y=-3425, z=1085)
+Iteration #16
+8 > at Coord(x=57, y=-3497, z=2322)
+Iteration #17
+0 > at Coord(x=26, y=-4784, z=2373)
+Iteration #18
+0 > at Coord(x=30, y=-4754, z=3575)
+Iteration #19
+4 > at Coord(x=65, y=-4737, z=4855)
+Iteration #20
+2 > at Coord(x=-107, y=-6003, z=4795)
+Iteration #21
+9 > at Coord(x=-70, y=-5976, z=3633)
+Iteration #22
+5 > at Coord(x=4, y=-5941, z=2429)
+Iteration #23
+5 > at Coord(x=33, y=-5990, z=1126)
+Iteration #24
+2 > at Coord(x=-79, y=-2402, z=2282)
+Iteration #25
+6 > at Coord(x=76, y=-1096, z=2344)
+Iteration #26
+0 > at Coord(x=46, y=-1144, z=3539)
+Iteration #27
+0 > at Coord(x=-31, y=171, z=3652)
+Iteration #28
+3 > at Coord(x=-1206, y=48, z=3477)
+Iteration #29
+3 > at Coord(x=14, y=154, z=2399)
+Iteration #30
+2 > at Coord(x=2342, y=-2296, z=1116)
+Iteration #31
+4 > at Coord(x=2358, y=-2273, z=48)
+Iteration #32
+0 > at Coord(x=-41, y=71, z=-1237)
+Iteration #33
+2 > at Coord(x=74, y=66, z=-2337)
+Iteration #34
+0 > at Coord(x=-78, y=1232, z=-64)
+Iteration #35
+0 > at Coord(x=-87, y=2453, z=6)
