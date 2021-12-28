@@ -22,7 +22,7 @@ def enhance(my_image, iteration):
     else:
         ref_image = np.pad(image, pad_width=2, mode='constant', constant_values=0)
 
-    for index, value in np.ndenumerate(new_image):
+    for index, _ in np.ndenumerate(new_image):
         ref_y, ref_x = index
         ref_string = []
         ref_string += list(ref_image[ref_y][ref_x:ref_x+3])
