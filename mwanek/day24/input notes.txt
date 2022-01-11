@@ -1,0 +1,233 @@
+
+#### 1 DONE
+inp w
+add y w
+add y 12
+add z y
+    Z = (#1 + 12)
+
+#### 2 DONE
+inp w
+mul z 26
+mul y 0
+add y w
+add y 7
+add z y
+    Z = [[26*(#1+12)] + (#2+7)]
+
+#### 3
+inp w
+add x 1
+mul z 26
+mul y 0
+add y w
+add y 8
+add z y
+    Z = [26*[[26*(#1+12)] + (#2+7)] + (#3+8)]
+
+#### 4
+inp w
+mul z 26
+mul y 0
+add y w
+add y 8
+add z y
+    Z = [26*[26*[[26*(#1+12)] + (#2+7)] + (#3+8)] + (#4+8)]
+
+#### 5
+inp w
+mul z 26
+mul y 0
+add y w
+add y 15
+add z y
+    Z = [26*[26*[26*[[26*(#1+12)] + (#2+7)] + (#3+8)] + (#4+8)] + (#5+15)]
+
+#### 6
+inp w
+mul x 0
+add x z
+mod x 26
+    X = #5 + 15
+div z 26
+    Z = [26*[26*[[26*(#1+12)] + (#2+7)] + (#3+8)] + (#4+8)]
+add x -16
+    X = #5 - 1
+eql x w
+    1: #5 - 1  = #6
+    0: #5 - 1 != #6
+eql x 0
+    1: #5 - 1 != #6
+    0: #5 - 1  = #6
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 12
+mul y x
+add z y
+    If #5 - 1 == #6:
+        Z = [26*[26*[[26*(#1+12)] + (#2+7)] + (#3+8)] + (#4+8)]
+    If #5 - 1 != #6:
+        Z = [26*[26*[26*[[26*(#1+12)] + (#2+7)] + (#3+8)] + (#4+8)] + (#6+12)]
+
+
+#### 7
+inp w
+add x 1
+mul z 26
+mul y 0
+add y w
+add y 8
+add z y
+    If #5 - 1 == #6:
+        Z = [26*[26*[26*[[26*(#1+12)] + (#2+7)] + (#3+8)] + (#4+8)]] + (#7+8)
+    If #5 - 1 != #6:
+        Z = [26*[26*[26*[26*[[26*(#1+12)] + (#2+7)] + (#3+8)] + (#4+8)] + (#6+12)] + (#7+8)]
+
+
+#### 8
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -11
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+
+#### 9
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -13
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
+
+#### 10
+inp w
+mul x 0
+add x z
+mod x 26
+add x 13
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+
+#### 11
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -8
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
+
+#### 12
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -1
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 9
+mul y x
+add z y
+
+#### 13
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -4
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 4
+mul y x
+add z y
+
+#### 14
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -14
+eql x w
+eql x 0
+    X-14 = W means X = 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+    Z needs to be zero here
+mul y 0
+add y w
+add y 13
+mul y x
+    X needs to be zero here
+add z y
+    Z needs to be zero here
